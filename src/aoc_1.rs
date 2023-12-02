@@ -103,8 +103,16 @@ mod tests {
         assert_eq!("on", replace_number("on", 1));
         assert_eq!("on", replace_number("on", 2));
 
+        assert_eq!("0", replace_number("zero", 0));
         assert_eq!("1", replace_number("one", 1));
         assert_eq!("2", replace_number("two", 2));
+        assert_eq!("3", replace_number("three", 3));
+        assert_eq!("4", replace_number("four", 4));
+        assert_eq!("5", replace_number("five", 5));
+        assert_eq!("6", replace_number("six", 6));
+        assert_eq!("7", replace_number("seven", 7));
+        assert_eq!("8", replace_number("eight", 8));
+        assert_eq!("9", replace_number("nine", 9));
 
         assert_eq!("11", replace_number("1one", 1));
         assert_eq!("1one", replace_number("1one", 2));
