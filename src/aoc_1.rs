@@ -26,6 +26,8 @@ fn aoc_1_2(input: &str) -> u32 {
         .unwrap();
 }
 
+// Converts string to appended first and last digit, including digit words
+// e.g. "a1btwo" -> 12
 fn word_value_02(input: &str) -> u32 {
     let mut both = String::from("");
     let lr = &replace_number_words_lr(input);
@@ -35,6 +37,8 @@ fn word_value_02(input: &str) -> u32 {
     return word_value_01(&both);
 }
 
+// Converts string to appended first and last digit
+// e.g. "a1b2" -> 12
 fn word_value_01(input: &str) -> u32 {
     let v = digits(input);
     return (10 * v.first().unwrap()) + v.last().unwrap();
@@ -77,8 +81,8 @@ fn file_lines(path: &str) -> Lines<BufReader<File>> {
         .unwrap();
 }
 
-// Convert string to 10 * first + last digit
-// e.g. "123" -> 13
+// Convert string to vec of digits
+// e.g. "1a2b3" -> 123
 fn digits(s: &str) -> Vec<u32> {
     return s.chars()
         .filter(|c| c.is_digit(10))
@@ -138,7 +142,7 @@ mod tests {
     #[test]
     fn aoc_1_2_result() {
         assert_eq!(281, aoc_1_2(EXAMPLE_02));
-        assert_ne!(55413, aoc_1_2(ACTUAL));
+        assert_eq!(55413, aoc_1_2(ACTUAL));
     }
 
     #[test]
