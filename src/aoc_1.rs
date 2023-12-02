@@ -1,8 +1,11 @@
 use std::fs::File;
-use std::io::{prelude::*, BufReader, Lines, Result, Error};
+use std::io::{prelude::*, BufReader, Lines};
 
+#[allow(dead_code)]
 const EXAMPLE_01: &str = "./src/01_01_example.txt";
+#[allow(dead_code)]
 const EXAMPLE_02: &str = "./src/01_02_example.txt";
+#[allow(dead_code)]
 const ACTUAL: &str = "./src/01.txt";
 
 #[allow(dead_code)]
@@ -18,8 +21,7 @@ fn aoc_1_1(input: &str) -> u32 {
 fn aoc_1_2(input: &str) -> u32 {
     return file_lines(input)
         .map(|l| l.unwrap())
-        .map(|s| replace_number_words(&s))
-        .map(|s| word_value_01(&s))
+        .map(|s| word_value_02(&s))
         .reduce(|a,b| a + b)
         .unwrap();
 }
@@ -41,17 +43,17 @@ fn replace_number_words(input: &str) -> String {
         str.push(c);
         str = replace_number_words_smallest_first(&str.as_str());
     }
-    return str.to_string();
+    return str;
 }
 
 // Replace number words with digit, from small to large
 fn replace_number_words_smallest_first(input: &str) -> String {
     let all_digits: Vec<u8> = vec![1, 2, 3, 4, 5, 6, 7, 8, 9];
     let mut str = input.to_string();
-    for i in all_digits.iter() {
-        str = replace_number(&str, *i);
+    for i in all_digits {
+        str = replace_number(&str, i);
     }
-    return str.to_string();
+    return str;
 }
 
 fn file_lines(path: &str) -> Lines<BufReader<File>> {
@@ -61,6 +63,8 @@ fn file_lines(path: &str) -> Lines<BufReader<File>> {
         .unwrap();
 }
 
+// Convert string to 10 * first + last digit
+// e.g. "123" -> 13
 fn digits(s: &str) -> Vec<u32> {
     return s.chars()
         .filter(|c| c.is_digit(10))
@@ -68,11 +72,15 @@ fn digits(s: &str) -> Vec<u32> {
         .collect();
 }
 
+// Replace digit word in a string with the corresponding digit
+// e.g. "atwo" -> "a2"
 fn replace_number(input: &str, target: u8) -> String {
     let target_str = number_to_word(&target).unwrap();
     return input.replace(target_str, &word_to_number(target_str).unwrap().to_string());
 }
 
+// Map maybe digit word to Option digit
+// e.g. "one" -> Some(1)
 fn word_to_number(input: &str) -> Option<u8> {
     match input {
         "one"  => Some(1),
@@ -87,6 +95,7 @@ fn word_to_number(input: &str) -> Option<u8> {
         _      => None,
     }
 }
+
 fn number_to_word(input: &u8) -> Option<&str> {
     match input {
         1 => Some("one"),
@@ -101,7 +110,6 @@ fn number_to_word(input: &u8) -> Option<&str> {
         _      => None,
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -180,6 +188,7 @@ mod tests {
 
     #[test]
     fn word_value_02_test() {
+        // Given examples
         assert_eq!(29, word_value_02("two1nine"));
         assert_eq!(83, word_value_02("eightwothree"));
         assert_eq!(13, word_value_02("abcone2threexyz"));
@@ -187,5 +196,15 @@ mod tests {
         assert_eq!(42, word_value_02("4nineeightseven2"));
         assert_eq!(14, word_value_02("zoneight234"));
         assert_eq!(76, word_value_02("7pqrstsixteen"));
+
+        // Custom examples  
+        assert_eq!(77, word_value_02("seven"));
+        assert_eq!(77, word_value_02("7"));
+
+        // Include first part examples
+        assert_eq!(12, word_value_02("1abc2"));
+        assert_eq!(38, word_value_02("pqr3stu8vwx"));
+        assert_eq!(15, word_value_02("a1b2c3d4e5f"));
+        assert_eq!(77, word_value_02("treb7uchet"));
     }
 }
