@@ -33,27 +33,24 @@ fn digits(s: &str) -> Vec<u32> {
         .collect();
 }
 
-#[derive(PartialEq)]
-pub enum NumberWords {
-    One,
-    Two,
+fn word_to_number(input: &str) -> Option<u8> {
+    match input {
+        "one"  => Some(1),
+        "two"  => Some(2),
+        _      => None,
+    }
 }
-
-use std::str::FromStr;
-impl FromStr for NumberWords {
-    type Err = ();
-
-    fn from_str(input: &str) -> Result<NumberWords, Self::Err> {
-        match input {
-            "one"  => Ok(NumberWords::One),
-            "two"  => Ok(NumberWords::Two),
-            _      => Err(()),
-        }
+fn number_to_word(input: &u8) -> Option<&str> {
+    match input {
+        1  => Some("one"),
+        2  => Some("two"),
+        _      => None,
     }
 }
 
-pub fn word_to_number(s: &str) -> Option<u8> {
-    return None;
+fn replace_number(input: &str, target: u8) -> String {
+    let target_str = number_to_word(&target).unwrap();
+    return input.replace(target_str, &word_to_number(target_str).unwrap().to_string());
 }
 
 
@@ -62,7 +59,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn digits_01() {
+    fn digits_test() {
         assert_eq!(1, digits("1")[0]);
         assert_eq!(1, digits("a1")[0]);
         assert_eq!(1, digits("a1b")[0]);
@@ -70,9 +67,29 @@ mod tests {
     }
 
     #[test]
-    fn word_to_number_01() {
+    fn word_to_number_test() {
         assert_eq!(None, word_to_number("a"));
         assert_eq!(None, word_to_number("1"));
-        assert_eq!(Some(1), word_to_number("One"));
+        assert_eq!(Some(1), word_to_number("one"));
+        assert_eq!(Some(2), word_to_number("two"));
+    }
+
+    #[test]
+    fn replace_number_test() {
+        assert_eq!("a", replace_number("a", 1));
+        assert_eq!("a", replace_number("a", 2));
+
+        assert_eq!("on", replace_number("on", 1));
+        assert_eq!("on", replace_number("on", 2));
+
+        assert_eq!("1", replace_number("one", 1));
+        assert_eq!("2", replace_number("two", 2));
+
+        assert_eq!("11", replace_number("1one", 1));
+        assert_eq!("1one", replace_number("1one", 2));
+        assert_eq!("12", replace_number("1two", 2));
+
+        assert_eq!("11", replace_number("one1", 1));
+        assert_eq!("1two", replace_number("onetwo", 1));
     }
 }
