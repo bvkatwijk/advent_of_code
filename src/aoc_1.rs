@@ -34,7 +34,18 @@ fn word_value_01(input: &str) -> u32 {
 }
 
 
+// Replace number words with digit, from left to right
 fn replace_number_words(input: &str) -> String {
+    let mut str = String::from("");
+    for c in input.chars() {
+        str.push(c);
+        str = replace_number_words_smallest_first(&str.as_str());
+    }
+    return str.to_string();
+}
+
+// Replace number words with digit, from small to large
+fn replace_number_words_smallest_first(input: &str) -> String {
     let all_digits: Vec<u8> = vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
     let mut str = input.to_string();
     for i in all_digits.iter() {
@@ -107,7 +118,7 @@ mod tests {
     #[test]
     fn aoc_1_2_result() {
         assert_eq!(281, aoc_1_2(EXAMPLE_02));
-        // assert_eq!(55712, aoc_1_2(ACTUAL));
+        assert_eq!(1, aoc_1_2(ACTUAL)); // WIP
     }
 
     #[test]
@@ -172,7 +183,7 @@ mod tests {
     #[test]
     fn word_value_02_test() {
         assert_eq!(29, word_value_02("two1nine"));
-        assert_eq!(83, word_value_02("eightwothree")); // issue: i'm replacing digits first, while I should look left-to-right (eightwo => 8wo, not eigh2)
+        assert_eq!(83, word_value_02("eightwothree"));
         assert_eq!(13, word_value_02("abcone2threexyz"));
         assert_eq!(24, word_value_02("xtwone3four"));
         assert_eq!(42, word_value_02("4nineeightseven2"));
