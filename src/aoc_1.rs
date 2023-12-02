@@ -2,17 +2,16 @@ use std::fs::File;
 use std::io::{prelude::*, BufReader, Lines};
 
 #[allow(dead_code)]
-pub fn aoc_1_1() {
+pub fn aoc_1_1() -> u32 {
     let file = File::open("./src/01.txt");
     let reader = BufReader::new(file.unwrap());
     let lines = reader.lines();
-    let sum = lines
+    return lines
         .map(|l| l.unwrap())
         .map(|s| digits(&s))
         .map(|v| (10 * v.first().unwrap()) + v.last().unwrap())
         .reduce(|a,b| a + b)
         .unwrap();
-    println!("{}", sum);
 }
 
 pub fn aoc_1_2() {
@@ -59,6 +58,11 @@ mod tests {
     use super::*;
 
     #[test]
+    fn aoc_1_result() {
+        assert_eq!(55712, aoc_1_1());
+    }
+
+    #[test]
     fn digits_test() {
         assert_eq!(1, digits("1")[0]);
         assert_eq!(1, digits("a1")[0]);
@@ -91,5 +95,6 @@ mod tests {
 
         assert_eq!("11", replace_number("one1", 1));
         assert_eq!("1two", replace_number("onetwo", 1));
+        assert_eq!("12", replace_number(&replace_number("onetwo", 1), 2));
     }
 }
