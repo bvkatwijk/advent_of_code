@@ -1,26 +1,50 @@
 use std::fs::File;
-use std::io::{prelude::*, BufReader, Lines};
+use std::io::{prelude::*, BufReader, Lines, Result, Error};
+
+const EXAMPLE_01: &str = "./src/01_01_example.txt";
+const EXAMPLE_02: &str = "./src/01_02_example.txt";
+const ACTUAL: &str = "./src/01.txt";
 
 #[allow(dead_code)]
-pub fn aoc_1_1() -> u32 {
-    let file = File::open("./src/01.txt");
-    let reader = BufReader::new(file.unwrap());
-    let lines = reader.lines();
-    return lines
+fn aoc_1_1(input: &str) -> u32 {
+    return file_lines(input)
         .map(|l| l.unwrap())
-        .map(|s| digits(&s))
-        .map(|v| (10 * v.first().unwrap()) + v.last().unwrap())
+        .map(|s| word_value_01(&s))
         .reduce(|a,b| a + b)
         .unwrap();
 }
 
-pub fn aoc_1_2() {
-    let lines = file_lines();
-    let nums = vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+#[allow(dead_code)]
+fn aoc_1_2(input: &str) -> u32 {
+    return file_lines(input)
+        .map(|l| l.unwrap())
+        .map(|s| replace_number_words(&s))
+        .map(|s| word_value_01(&s))
+        .reduce(|a,b| a + b)
+        .unwrap();
 }
 
-pub fn file_lines() -> Lines<BufReader<File>> {
-    return File::open("./src/01.txt")
+fn word_value_02(input: &str) -> u32 {
+    return word_value_01(&replace_number_words(input));
+}
+
+fn word_value_01(input: &str) -> u32 {
+    let v = digits(input);
+    return (10 * v.first().unwrap()) + v.last().unwrap();
+}
+
+
+fn replace_number_words(input: &str) -> String {
+    let all_digits: Vec<u8> = vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+    let mut str = input.to_string();
+    for i in all_digits.iter() {
+        str = replace_number(&str, *i);
+    }
+    return str.to_string();
+}
+
+fn file_lines(path: &str) -> Lines<BufReader<File>> {
+    return File::open(path)
         .map(|file| BufReader::new(file))
         .map(|it| it.lines())
         .unwrap();
@@ -31,6 +55,11 @@ fn digits(s: &str) -> Vec<u32> {
         .filter(|c| c.is_digit(10))
         .map(|c| c.to_digit(10).unwrap())
         .collect();
+}
+
+fn replace_number(input: &str, target: u8) -> String {
+    let target_str = number_to_word(&target).unwrap();
+    return input.replace(target_str, &word_to_number(target_str).unwrap().to_string());
 }
 
 fn word_to_number(input: &str) -> Option<u8> {
@@ -64,19 +93,21 @@ fn number_to_word(input: &u8) -> Option<&str> {
     }
 }
 
-fn replace_number(input: &str, target: u8) -> String {
-    let target_str = number_to_word(&target).unwrap();
-    return input.replace(target_str, &word_to_number(target_str).unwrap().to_string());
-}
-
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn aoc_1_result() {
-        assert_eq!(55712, aoc_1_1());
+    fn aoc_1_1_result() {
+        assert_eq!(142, aoc_1_1(EXAMPLE_01));
+        assert_eq!(55712, aoc_1_1(ACTUAL));
+    }
+
+    #[test]
+    fn aoc_1_2_result() {
+        assert_eq!(281, aoc_1_2(EXAMPLE_02));
+        // assert_eq!(55712, aoc_1_2(ACTUAL));
     }
 
     #[test]
@@ -121,5 +152,31 @@ mod tests {
         assert_eq!("11", replace_number("one1", 1));
         assert_eq!("1two", replace_number("onetwo", 1));
         assert_eq!("12", replace_number(&replace_number("onetwo", 1), 2));
+    }
+
+    #[test]
+    fn replace_number_words_test() {
+        assert_eq!("1", replace_number_words("one"));
+        assert_eq!("12", replace_number_words("onetwo"));
+        assert_eq!("219", replace_number_words("two1nine"));
+    }
+
+    #[test]
+    fn word_value_01_test() {
+        assert_eq!(12, word_value_01("1abc2"));
+        assert_eq!(38, word_value_01("pqr3stu8vwx"));
+        assert_eq!(15, word_value_01("a1b2c3d4e5f"));
+        assert_eq!(77, word_value_01("treb7uchet"));
+    }
+
+    #[test]
+    fn word_value_02_test() {
+        assert_eq!(29, word_value_02("two1nine"));
+        assert_eq!(83, word_value_02("eightwothree")); // issue: i'm replacing digits first, while I should look left-to-right (eightwo => 8wo, not eigh2)
+        assert_eq!(13, word_value_02("abcone2threexyz"));
+        assert_eq!(24, word_value_02("xtwone3four"));
+        assert_eq!(42, word_value_02("4nineeightseven2"));
+        assert_eq!(14, word_value_02("zoneight234"));
+        assert_eq!(76, word_value_02("7pqrstsixteen"));
     }
 }
