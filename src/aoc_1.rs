@@ -7,7 +7,7 @@ pub fn print() {
     let sum = reader.lines()
         .map(|l| l.unwrap())
         .map(|s| digits(&s))
-        .map(|v| v.first().unwrap() + v.last().unwrap())
+        .map(|v| (10 * v.first().unwrap()) + v.last().unwrap())
         .reduce(|a,b| a + b)
         .unwrap();
     println!("{}", sum);
