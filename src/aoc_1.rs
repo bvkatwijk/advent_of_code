@@ -27,7 +27,12 @@ fn aoc_1_2(input: &str) -> u32 {
 }
 
 fn word_value_02(input: &str) -> u32 {
-    return word_value_01(&replace_number_words(input));
+    let mut both = String::from("");
+    let lr = &replace_number_words_lr(input);
+    let rl = &replace_number_words_rl(input);
+    both.push_str(lr);
+    both.push_str(rl);
+    return word_value_01(&both);
 }
 
 fn word_value_01(input: &str) -> u32 {
@@ -35,12 +40,21 @@ fn word_value_01(input: &str) -> u32 {
     return (10 * v.first().unwrap()) + v.last().unwrap();
 }
 
-
 // Replace number words with digit, from left to right
-fn replace_number_words(input: &str) -> String {
+fn replace_number_words_lr(input: &str) -> String {
     let mut str = String::from("");
     for c in input.chars() {
         str.push(c);
+        str = replace_number_words_smallest_first(&str.as_str());
+    }
+    return str;
+}
+
+// Replace number words with digit, from right to left
+fn replace_number_words_rl(input: &str) -> String {
+    let mut str: String = String::from("");
+    for c in input.chars().rev() {
+        str.insert(0, c);
         str = replace_number_words_smallest_first(&str.as_str());
     }
     return str;
@@ -124,8 +138,7 @@ mod tests {
     #[test]
     fn aoc_1_2_result() {
         assert_eq!(281, aoc_1_2(EXAMPLE_02));
-        assert_ne!(55445, aoc_1_2(ACTUAL));
-        // assert_eq!(???, aoc_1_2(ACTUAL));
+        assert_ne!(55413, aoc_1_2(ACTUAL));
     }
 
     #[test]
@@ -172,10 +185,19 @@ mod tests {
     }
 
     #[test]
-    fn replace_number_words_test() {
-        assert_eq!("1", replace_number_words("one"));
-        assert_eq!("12", replace_number_words("onetwo"));
-        assert_eq!("219", replace_number_words("two1nine"));
+    fn replace_number_words_lr_test() {
+        assert_eq!("1", replace_number_words_lr("one"));
+        assert_eq!("12", replace_number_words_lr("onetwo"));
+        assert_eq!("219", replace_number_words_lr("two1nine"));
+        assert_eq!("8wo", replace_number_words_lr("eightwo"));
+    }
+
+    #[test]
+    fn replace_number_words_rl_test() {
+        assert_eq!("1", replace_number_words_rl("one"));
+        assert_eq!("12", replace_number_words_rl("onetwo"));
+        assert_eq!("219", replace_number_words_rl("two1nine"));
+        assert_eq!("eigh2", replace_number_words_rl("eightwo"));
     }
 
     #[test]
@@ -200,6 +222,7 @@ mod tests {
         // Custom examples  
         assert_eq!(77, word_value_02("seven"));
         assert_eq!(77, word_value_02("7"));
+        assert_eq!(82, word_value_02("eightwo"));
 
         // Include first part examples
         assert_eq!(12, word_value_02("1abc2"));
