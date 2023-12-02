@@ -46,7 +46,7 @@ fn replace_number_words(input: &str) -> String {
 
 // Replace number words with digit, from small to large
 fn replace_number_words_smallest_first(input: &str) -> String {
-    let all_digits: Vec<u8> = vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+    let all_digits: Vec<u8> = vec![1, 2, 3, 4, 5, 6, 7, 8, 9];
     let mut str = input.to_string();
     for i in all_digits.iter() {
         str = replace_number(&str, *i);
@@ -75,7 +75,6 @@ fn replace_number(input: &str, target: u8) -> String {
 
 fn word_to_number(input: &str) -> Option<u8> {
     match input {
-        "zero"  => Some(0),
         "one"  => Some(1),
         "two"  => Some(2),
         "three"  => Some(3),
@@ -90,7 +89,6 @@ fn word_to_number(input: &str) -> Option<u8> {
 }
 fn number_to_word(input: &u8) -> Option<&str> {
     match input {
-        0 => Some("zero"),
         1 => Some("one"),
         2 => Some("two"),
         3 => Some("three"),
@@ -118,7 +116,8 @@ mod tests {
     #[test]
     fn aoc_1_2_result() {
         assert_eq!(281, aoc_1_2(EXAMPLE_02));
-        assert_eq!(1, aoc_1_2(ACTUAL)); // WIP
+        assert_ne!(55445, aoc_1_2(ACTUAL));
+        // assert_eq!(???, aoc_1_2(ACTUAL));
     }
 
     #[test]
@@ -145,7 +144,6 @@ mod tests {
         assert_eq!("on", replace_number("on", 1));
         assert_eq!("on", replace_number("on", 2));
 
-        assert_eq!("0", replace_number("zero", 0));
         assert_eq!("1", replace_number("one", 1));
         assert_eq!("2", replace_number("two", 2));
         assert_eq!("3", replace_number("three", 3));
