@@ -1,1 +1,4 @@
-# advent_of_code
+# Advent of Code
+
+### Spoiler Warning
+The tests contain the solutions as assertions.
