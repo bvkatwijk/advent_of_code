@@ -16,6 +16,7 @@ pub fn aoc_1_1() -> u32 {
 
 pub fn aoc_1_2() {
     let lines = file_lines();
+    let nums = vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 }
 
 pub fn file_lines() -> Lines<BufReader<File>> {
@@ -34,15 +35,31 @@ fn digits(s: &str) -> Vec<u32> {
 
 fn word_to_number(input: &str) -> Option<u8> {
     match input {
+        "zero"  => Some(0),
         "one"  => Some(1),
         "two"  => Some(2),
+        "three"  => Some(3),
+        "four"  => Some(4),
+        "five"  => Some(5),
+        "six"  => Some(6),
+        "seven"  => Some(7),
+        "eight"  => Some(8),
+        "nine"  => Some(9),
         _      => None,
     }
 }
 fn number_to_word(input: &u8) -> Option<&str> {
     match input {
-        1  => Some("one"),
-        2  => Some("two"),
+        0 => Some("zero"),
+        1 => Some("one"),
+        2 => Some("two"),
+        3 => Some("three"),
+        4 => Some("four"),
+        5 => Some("five"),
+        6 => Some("six"),
+        7 => Some("seven"),
+        8 => Some("eight"),
+        9 => Some("nine"),
         _      => None,
     }
 }
