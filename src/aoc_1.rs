@@ -9,18 +9,18 @@ const ACTUAL: &str = "./src/01.txt";
 
 #[allow(dead_code)]
 fn aoc_1_1(input: &str) -> u32 {
-    return helper::file_lines(input)
+    helper::file_lines(input)
         .map(|l| l.unwrap())
         .map(|s| word_value_01(&s))
-        .sum();
+        .sum()
 }
 
 #[allow(dead_code)]
 fn aoc_1_2(input: &str) -> u32 {
-    return helper::file_lines(input)
+    helper::file_lines(input)
         .map(|l| l.unwrap())
         .map(|s| word_value_02(&s))
-        .sum();
+        .sum()
 }
 
 // Converts string to appended first and last digit, including digit words
@@ -31,14 +31,14 @@ fn word_value_02(input: &str) -> u32 {
     let rl = &replace_number_words_rl(input);
     both.push_str(lr);
     both.push_str(rl);
-    return word_value_01(&both);
+    word_value_01(&both)
 }
 
 // Converts string to appended first and last digit
 // e.g. "a1b2" -> 12
 fn word_value_01(input: &str) -> u32 {
     let v = digits(input);
-    return (10 * v.first().unwrap()) + v.last().unwrap();
+    (10 * v.first().unwrap()) + v.last().unwrap()
 }
 
 // Replace number words with digit, from left to right
@@ -48,7 +48,7 @@ fn replace_number_words_lr(input: &str) -> String {
         str.push(c);
         str = replace_number_words_smallest_first(&str.as_str());
     }
-    return str;
+    str
 }
 
 // Replace number words with digit, from right to left
@@ -58,7 +58,7 @@ fn replace_number_words_rl(input: &str) -> String {
         str.insert(0, c);
         str = replace_number_words_smallest_first(&str.as_str());
     }
-    return str;
+    str
 }
 
 // Replace number words with digit, from small to large
@@ -68,23 +68,23 @@ fn replace_number_words_smallest_first(input: &str) -> String {
     for i in all_digits {
         str = replace_number(&str, i);
     }
-    return str;
+    str
 }
 
 // Convert string to vec of digits
 // e.g. "1a2b3" -> 123
 fn digits(s: &str) -> Vec<u32> {
-    return s.chars()
+    s.chars()
         .filter(|c| c.is_digit(10))
         .map(|c| c.to_digit(10).unwrap())
-        .collect();
+        .collect()
 }
 
 // Replace digit word in a string with the corresponding digit
 // e.g. "atwo" -> "a2"
 fn replace_number(input: &str, target: u8) -> String {
     let target_str = number_to_word(&target).unwrap();
-    return input.replace(target_str, &word_to_number(target_str).unwrap().to_string());
+    input.replace(target_str, &word_to_number(target_str).unwrap().to_string())
 }
 
 // Map maybe digit word to Option digit

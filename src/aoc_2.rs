@@ -5,10 +5,10 @@ const EXAMPLE_01: &str = "./src/aoc_2/02_01_example.txt";
 
 #[allow(dead_code)]
 fn aoc_2_1(input: &str) -> u32 {
-    return helper::file_lines(input)
+    helper::file_lines(input)
         .map(|l| l.unwrap())
         .map(|s| possible_game_id_or_0(&s))
-        .sum();
+        .sum()
 }
 
 fn possible_game_id_or_0(input: &str) -> u32 {
@@ -35,18 +35,18 @@ struct Draw {
 
 fn draws(input: &str) -> Vec<&str> {
     let split: Vec<&str> = input.split(":").collect();
-    return split[1]
+    split[1]
         .split(";")
         .map(|s| s.trim())
-        .collect();
+        .collect()
 }
 
 fn game_id(input: &str) -> u8 {
-    return input.split(":")
+    input.split(":")
         .next()
         .map(|s| &s[5..])
         .map(|s| s.parse::<u8>().unwrap())
-        .unwrap();
+        .unwrap()
 }
 
 #[cfg(test)]
