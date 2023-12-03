@@ -1,3 +1,4 @@
+use helper;
 use std::fs::File;
 use std::io::{prelude::*, BufReader, Lines};
 
@@ -10,7 +11,7 @@ const ACTUAL: &str = "./src/01.txt";
 
 #[allow(dead_code)]
 fn aoc_1_1(input: &str) -> u32 {
-    return file_lines(input)
+    return helper::file_lines(input)
         .map(|l| l.unwrap())
         .map(|s| word_value_01(&s))
         .sum();
@@ -18,7 +19,7 @@ fn aoc_1_1(input: &str) -> u32 {
 
 #[allow(dead_code)]
 fn aoc_1_2(input: &str) -> u32 {
-    return file_lines(input)
+    return helper::file_lines(input)
         .map(|l| l.unwrap())
         .map(|s| word_value_02(&s))
         .sum();
@@ -70,13 +71,6 @@ fn replace_number_words_smallest_first(input: &str) -> String {
         str = replace_number(&str, i);
     }
     return str;
-}
-
-pub fn file_lines(path: &str) -> Lines<BufReader<File>> {
-    return File::open(path)
-        .map(|file| BufReader::new(file))
-        .map(|it| it.lines())
-        .unwrap();
 }
 
 // Convert string to vec of digits
