@@ -15,17 +15,30 @@ fn possible_game_id_or_0(input: &str) -> u32 {
     0
 }
 
-// enum Color {
-//     Red,
-//     Green,
-//     Blue
-// }
+#[derive(Debug)]
+#[derive(PartialEq)]
+enum Color {
+    Red,
+    Green,
+    Blue,
+}
 
-// fn game(input: &str) -> Game {
-//     Game {
+fn color_to_str(color: Color) -> &'static str {
+    match color {
+        Color::Red => "red",
+        Color::Green => "green",
+        Color::Blue => "blue"
+    }
+}
 
-//     }
-// }
+fn str_to_color(input: &str) -> Option<Color> {
+    match input {
+         "red" => Some(Color::Red),
+         "green" => Some(Color::Green),
+         "blue" => Some(Color::Blue),
+         _ => None,
+    }
+}
 
 struct Draw {
     red_count: u8,
@@ -70,5 +83,15 @@ mod tests{
     #[test]
     fn draws_test() {
         assert_eq!("3 blue, 4 red", draws(GAME_1)[0]);
+    }
+
+    #[test]
+    fn str_to_color_test() {
+        assert_eq!(Color::Blue, str_to_color("blue").unwrap());
+    }
+
+    #[test]
+    fn color_to_str_test() {
+        assert_eq!("blue", color_to_str(Color::Blue));
     }
 }
