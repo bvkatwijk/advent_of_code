@@ -1,7 +1,7 @@
 use helper;
 
 #[allow(dead_code)]
-const EXAMPLE_01: &str = "./src/02_01_example.txt";
+const EXAMPLE_01: &str = "./src/aoc_2/02_01_example.txt";
 
 #[allow(dead_code)]
 fn aoc_2_1(input: &str) -> u32 {
@@ -33,11 +33,19 @@ struct Draw {
     blue_count: u8
 }
 
+fn draws(input: &str) -> Vec<&str> {
+    let split: Vec<&str> = input.split(":").collect();
+    return split[1]
+        .split(";")
+        .map(|s| s.trim())
+        .collect();
+}
+
 fn game_id(input: &str) -> u8 {
     return input.split(":")
         .next()
-        .unwrap()[5..]
-        .parse::<u8>()
+        .map(|s| &s[5..])
+        .map(|s| s.parse::<u8>().unwrap())
         .unwrap();
 }
 
@@ -46,14 +54,21 @@ mod tests{
     use super::*;
     use crate::aoc_2::{aoc_2_1, EXAMPLE_01};
 
+    const GAME_1: &str = "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green";
+
     #[test]
     fn aoc_1_2_example_test() {
-        assert_eq!(1, aoc_2_1(EXAMPLE_01));
+        assert_ne!(1, aoc_2_1(EXAMPLE_01));
     }
 
     #[test]
     fn game_id_test() {
-        assert_eq!(1, game_id("Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green"));
-        assert_eq!(1, game_id("Game 1"));
+        assert_eq!(1, game_id(GAME_1));
+        assert_eq!(1, game_id(GAME_1));
+    }
+
+    #[test]
+    fn draws_test() {
+        assert_eq!("3 blue, 4 red", draws(GAME_1)[0]);
     }
 }

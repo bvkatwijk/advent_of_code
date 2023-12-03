@@ -1,6 +1,4 @@
 use helper;
-use std::fs::File;
-use std::io::{prelude::*, BufReader, Lines};
 
 #[allow(dead_code)]
 const EXAMPLE_01: &str = "./src/01_01_example.txt";
