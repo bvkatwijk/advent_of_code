@@ -13,8 +13,7 @@ fn aoc_1_1(input: &str) -> u32 {
     return file_lines(input)
         .map(|l| l.unwrap())
         .map(|s| word_value_01(&s))
-        .reduce(|a,b| a + b)
-        .unwrap();
+        .sum();
 }
 
 #[allow(dead_code)]
@@ -22,8 +21,7 @@ fn aoc_1_2(input: &str) -> u32 {
     return file_lines(input)
         .map(|l| l.unwrap())
         .map(|s| word_value_02(&s))
-        .reduce(|a,b| a + b)
-        .unwrap();
+        .sum();
 }
 
 // Converts string to appended first and last digit, including digit words
@@ -74,7 +72,7 @@ fn replace_number_words_smallest_first(input: &str) -> String {
     return str;
 }
 
-fn file_lines(path: &str) -> Lines<BufReader<File>> {
+pub fn file_lines(path: &str) -> Lines<BufReader<File>> {
     return File::open(path)
         .map(|file| BufReader::new(file))
         .map(|it| it.lines())
