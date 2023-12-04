@@ -8,6 +8,11 @@ const ACTUAL: &str = "./src/aoc_3/03_01.txt";
 #[allow(dead_code)]
 fn aoc_3_1(path: &str) {
     let matrix = matrix(path);
+
+}
+
+#[allow(dead_code)]
+fn aoc_3_2(path: &str) {
     
 }
 
