@@ -20,10 +20,46 @@ fn aoc_2_1(input: &str) -> u32 {
         .sum()
 }
 
+fn aoc_2_2(input: &str) -> u32 {
+    helper::file_lines(input)
+        .map(|l| l.unwrap())
+        .map(|s| minimal_set(&s))
+        .map(|s| power(s))
+        .map(|i| (i) as u32)
+        .sum()
+}
+
+fn minimal_set(input: &str) -> HashMap<Color, u8> {
+    let game = game(input);
+    let min_red = min_cubes_needed(&game, Color::Red);
+    let min_green = min_cubes_needed(&game, Color::Green);
+    let min_blue = min_cubes_needed(&game, Color::Blue);
+    let mut min = HashMap::new();
+    min.insert(Color::Red, *min_red);
+    min.insert(Color::Green, *min_green);
+    min.insert(Color::Blue, *min_blue);
+    min
+}
+
+fn power(map: HashMap<Color, u8>) -> u32 {
+    map.values()
+        .map(|i| (*i) as u32)
+        .reduce(|a, b| (a * b))
+        .unwrap()
+}
+
+// Get mininmal cubes needed of a color for supplied game to be possible
+fn min_cubes_needed(game: &Vec<HashMap<Color, u8>>, color: Color) -> &u8 {
+    game.iter()
+        .map(|m| m.get(&color).unwrap_or(&0))
+        .max()
+        .unwrap_or(&0)
+}
+
+// Get game id if the game is possible, else 0
 fn possible_game_id_or_0(input: &str) -> u8 {
-    let all_possible = draws(input)
+    let all_possible = game(input)
         .iter()
-        .map(|s| draw(s))
         .all(|d| is_possible(&d));
     if all_possible {
         game_id(input)
@@ -32,6 +68,14 @@ fn possible_game_id_or_0(input: &str) -> u8 {
     }
 }
 
+fn game(input: &str) -> Vec<HashMap<Color, u8>> {
+    draws(input)
+        .iter()
+        .map(|s| draw(s))
+        .collect()
+}
+
+// Returns whether game is possible according to max cube count
 fn is_possible(draw: &HashMap<Color, u8>) -> bool {
     draw.get(&Color::Blue).unwrap_or(&0) <= &BLUE_MAX
         && draw.get(&Color::Red).unwrap_or(&0) <= &RED_MAX
@@ -44,14 +88,6 @@ enum Color {
     Green,
     Blue,
 }
-
-// fn color_to_str(color: Color) -> &'static str {
-//     match color {
-//         Color::Red => "red",
-//         Color::Green => "green",
-//         Color::Blue => "blue"
-//     }
-// }
 
 fn str_to_color(input: &str) -> Option<Color> {
     match input {
@@ -108,9 +144,33 @@ mod tests{
     const GAME_1: &str = "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green";
 
     #[test]
-    fn aoc_1_2_example_test() {
+    fn aoc_1_2_test() {
         assert_eq!(8, aoc_2_1(EXAMPLE_01));
-        assert_eq!(1, aoc_2_1(ACTUAL));
+        assert_eq!(2061, aoc_2_1(ACTUAL));
+    }
+
+    #[test]
+    fn aoc_2_2_test() {
+        assert_eq!(2286, aoc_2_2(EXAMPLE_01));
+        assert_eq!(72596, aoc_2_2(ACTUAL));
+    }
+
+    #[test]
+    fn minimal_set_test() {
+        let mut expect = HashMap::new();
+        expect.insert(Color::Red, 4);
+        expect.insert(Color::Green, 2);
+        expect.insert(Color::Blue, 6);
+        assert_eq!(expect, minimal_set(GAME_1));
+    }
+
+    #[test]
+    fn power_test() {
+        let mut expect = HashMap::new();
+        expect.insert(Color::Red, 4);
+        expect.insert(Color::Green, 2);
+        expect.insert(Color::Blue, 6);
+        assert_eq!(48, power(expect));
     }
 
     #[test]
@@ -130,11 +190,6 @@ mod tests{
     fn str_to_color_test() {
         assert_eq!(Color::Blue, str_to_color("blue").unwrap());
     }
-
-    // #[test]
-    // fn color_to_str_test() {
-    //     assert_eq!("blue", color_to_str(Color::Blue));
-    // }
 
     #[test]
     fn is_possible_test() {
