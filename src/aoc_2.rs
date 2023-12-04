@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use helper;
 
 #[allow(dead_code)]
@@ -17,6 +19,8 @@ fn possible_game_id_or_0(input: &str) -> u32 {
 
 #[derive(Debug)]
 #[derive(PartialEq)]
+#[derive(Eq)]
+#[derive(Hash)]
 enum Color {
     Red,
     Green,
@@ -54,6 +58,28 @@ fn draws(input: &str) -> Vec<&str> {
         .collect()
 }
 
+// Parse single draw into map of color to count
+fn draw(input: &str) -> HashMap<Color, u8> {
+    let mut draw = HashMap::new();
+    let split = input.split(",")
+        .map(|s| s.trim())
+        .map(|s| parse(&s))
+        .for_each(|e| {
+            let count = draw.entry(e.1).or_insert(0);
+            *count += e.0;
+        });
+    draw
+}
+
+// Parse a draw string
+// e.g. "3 blue" -> (3, Blue)
+fn parse(draw: &str) -> (u8, Color) {
+    let split: Vec<&str> = draw.split(" ").collect();
+    let count = &split[0].parse::<u8>().unwrap();
+    let color = str_to_color(&split[1]).unwrap();
+    (*count, color)
+}
+
 fn game_id(input: &str) -> u8 {
     input.split(":")
         .next()
@@ -83,6 +109,8 @@ mod tests{
     #[test]
     fn draws_test() {
         assert_eq!("3 blue, 4 red", draws(GAME_1)[0]);
+        assert_eq!("1 red, 2 green, 6 blue", draws(GAME_1)[1]);
+        assert_eq!("2 green", draws(GAME_1)[2]);
     }
 
     #[test]
@@ -93,5 +121,21 @@ mod tests{
     #[test]
     fn color_to_str_test() {
         assert_eq!("blue", color_to_str(Color::Blue));
+    }
+
+    #[test]
+    fn parse_test() {
+        assert_eq!((1, Color::Blue), parse("1 blue"));
+        assert_eq!((1, Color::Red), parse("1 red"));
+        assert_eq!((3, Color::Blue), parse("3 blue"));
+    }
+
+    #[test]
+    fn draw_test() {
+        let mut expect = HashMap::new();
+        expect.insert(Color::Red, 1);
+        expect.insert(Color::Green, 2);
+        expect.insert(Color::Blue, 6);
+        assert_eq!(expect, draw("1 red, 2 green, 6 blue"));
     }
 }
