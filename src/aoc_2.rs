@@ -20,6 +20,7 @@ fn aoc_2_1(input: &str) -> u32 {
         .sum()
 }
 
+#[allow(dead_code)]
 fn aoc_2_2(input: &str) -> u32 {
     helper::file_lines(input)
         .map(|l| l.unwrap())
@@ -139,7 +140,6 @@ fn game_id(input: &str) -> u8 {
 #[cfg(test)]
 mod tests{
     use super::*;
-    use crate::aoc_2::{aoc_2_1, EXAMPLE_01};
 
     const GAME_1: &str = "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green";
 

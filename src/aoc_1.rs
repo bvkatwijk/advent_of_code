@@ -1,11 +1,11 @@
 use helper;
 
 #[allow(dead_code)]
-const EXAMPLE_01: &str = "./src/01_01_example.txt";
+const EXAMPLE_01: &str = "./src/aoc_1/01_01_example.txt";
 #[allow(dead_code)]
-const EXAMPLE_02: &str = "./src/01_02_example.txt";
+const EXAMPLE_02: &str = "./src/aoc_1/01_02_example.txt";
 #[allow(dead_code)]
-const ACTUAL: &str = "./src/01.txt";
+const ACTUAL: &str = "./src/aoc_1/01.txt";
 
 #[allow(dead_code)]
 fn aoc_1_1(input: &str) -> u32 {
