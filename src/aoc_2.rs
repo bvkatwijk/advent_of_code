@@ -4,36 +4,54 @@ use helper;
 
 #[allow(dead_code)]
 const EXAMPLE_01: &str = "./src/aoc_2/02_01_example.txt";
+#[allow(dead_code)]
+const ACTUAL: &str = "./src/aoc_2/02_01.txt";
+
+const RED_MAX: u8 = 12;
+const BLUE_MAX: u8 = 14;
+const GREEN_MAX: u8 = 13;
 
 #[allow(dead_code)]
 fn aoc_2_1(input: &str) -> u32 {
     helper::file_lines(input)
         .map(|l| l.unwrap())
         .map(|s| possible_game_id_or_0(&s))
+        .map(|i| (i) as u32)
         .sum()
 }
 
-fn possible_game_id_or_0(input: &str) -> u32 {
-    0
+fn possible_game_id_or_0(input: &str) -> u8 {
+    let all_possible = draws(input)
+        .iter()
+        .map(|s| draw(s))
+        .all(|d| is_possible(&d));
+    if all_possible {
+        game_id(input)
+    } else {
+        0
+    }
 }
 
-#[derive(Debug)]
-#[derive(PartialEq)]
-#[derive(Eq)]
-#[derive(Hash)]
+fn is_possible(draw: &HashMap<Color, u8>) -> bool {
+    draw.get(&Color::Blue).unwrap_or(&0) <= &BLUE_MAX
+        && draw.get(&Color::Red).unwrap_or(&0) <= &RED_MAX
+        && draw.get(&Color::Green).unwrap_or(&0) <= &GREEN_MAX
+}
+
+#[derive(Debug, PartialEq, Eq, Hash)]
 enum Color {
     Red,
     Green,
     Blue,
 }
 
-fn color_to_str(color: Color) -> &'static str {
-    match color {
-        Color::Red => "red",
-        Color::Green => "green",
-        Color::Blue => "blue"
-    }
-}
+// fn color_to_str(color: Color) -> &'static str {
+//     match color {
+//         Color::Red => "red",
+//         Color::Green => "green",
+//         Color::Blue => "blue"
+//     }
+// }
 
 fn str_to_color(input: &str) -> Option<Color> {
     match input {
@@ -42,12 +60,6 @@ fn str_to_color(input: &str) -> Option<Color> {
          "blue" => Some(Color::Blue),
          _ => None,
     }
-}
-
-struct Draw {
-    red_count: u8,
-    green_count: u8,
-    blue_count: u8
 }
 
 fn draws(input: &str) -> Vec<&str> {
@@ -61,7 +73,7 @@ fn draws(input: &str) -> Vec<&str> {
 // Parse single draw into map of color to count
 fn draw(input: &str) -> HashMap<Color, u8> {
     let mut draw = HashMap::new();
-    let split = input.split(",")
+    input.split(",")
         .map(|s| s.trim())
         .map(|s| parse(&s))
         .for_each(|e| {
@@ -97,7 +109,8 @@ mod tests{
 
     #[test]
     fn aoc_1_2_example_test() {
-        assert_ne!(1, aoc_2_1(EXAMPLE_01));
+        assert_eq!(8, aoc_2_1(EXAMPLE_01));
+        assert_eq!(1, aoc_2_1(ACTUAL));
     }
 
     #[test]
@@ -118,9 +131,16 @@ mod tests{
         assert_eq!(Color::Blue, str_to_color("blue").unwrap());
     }
 
+    // #[test]
+    // fn color_to_str_test() {
+    //     assert_eq!("blue", color_to_str(Color::Blue));
+    // }
+
     #[test]
-    fn color_to_str_test() {
-        assert_eq!("blue", color_to_str(Color::Blue));
+    fn is_possible_test() {
+        let mut draw = HashMap::new();
+        draw.insert(Color::Red, 1);
+        assert!(is_possible(&draw));
     }
 
     #[test]
@@ -134,8 +154,7 @@ mod tests{
     fn draw_test() {
         let mut expect = HashMap::new();
         expect.insert(Color::Red, 1);
-        expect.insert(Color::Green, 2);
         expect.insert(Color::Blue, 6);
-        assert_eq!(expect, draw("1 red, 2 green, 6 blue"));
+        assert_eq!(expect, draw("1 red, 6 blue"));
     }
 }
