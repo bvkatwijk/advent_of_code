@@ -25,7 +25,7 @@ fn aoc_4_2(path: &str) -> u32 {
     for (pos, line) in game_lines.iter().enumerate() {
         let game = (pos) as u8;
         println!("Game {}", game);
-        let score = winning_numbers(&line).len() as u8;
+        let score = winning_number_count(&line);
         
         for it in 0..score {
             let game_offset = (it + game) as u8;
@@ -39,6 +39,12 @@ fn aoc_4_2(path: &str) -> u32 {
     game_card_count.values().map(|u| *u as u32).sum()
 }
 
+// Returns amount of winning numbers in this game string
+fn winning_number_count(input: &str) -> u8 {
+    winning_numbers(&input).len() as u8
+}
+
+// 04-01: Returns score of the winning numbers as offset power of 2
 fn score(num: &Vec<u8>) -> i32 {
     let base: i32 = 2;
     let count: u32 = num.len() as u32;
@@ -61,18 +67,21 @@ fn winning_numbers(input: &str) -> Vec<u8> {
         .collect()
 }
 
+// Split input string into game id and data
 fn game_and_data(input: &str) -> Vec<&str> {
     input.split(":")
         .map(|s| s.trim())
         .collect()
 }
 
+// Split input string into winning numbers and own numbers
 fn winning_and_expected(data: &str) -> Vec<&str> {
     data.split("|")
         .map(|s| s.trim())
         .collect()
 }
 
+// Split input string into individual numbers
 fn numbers(input: &str) -> Vec<u8> {
     input.split_whitespace()
         .map(|s| s.parse::<u8>().unwrap())
