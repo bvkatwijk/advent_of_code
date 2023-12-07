@@ -1,4 +1,4 @@
-use std::{convert::TryInto, cmp};
+use std::{convert::TryInto, cmp, collections::HashMap};
 
 use helper;
 
@@ -16,6 +16,29 @@ fn aoc_4_1(path: &str) -> i32 {
         .sum()
 }
 
+#[allow(dead_code)]
+fn aoc_4_2(path: &str) -> u32 {
+    let game_lines: Vec<String> = helper::file_lines(&path).map(|l| l.unwrap()).collect();
+    let total_games = game_lines.len() as u8;
+    let mut game_card_count: HashMap<u8, u8> = HashMap::new();
+
+    for (pos, line) in game_lines.iter().enumerate() {
+        let game = (pos) as u8;
+        println!("Game {}", game);
+        let score = winning_numbers(&line).len() as u8;
+        
+        for it in 0..score {
+            let game_offset = (it + game) as u8;
+            if game_offset < total_games {
+                let game_count = game_card_count.entry(game_offset).or_insert(1);
+                *game_count += score;
+                println!("Game {} scores {:?}", game_offset, score);
+            }
+        }
+    }
+    game_card_count.values().map(|u| *u as u32).sum()
+}
+
 fn score(num: &Vec<u8>) -> i32 {
     let base: i32 = 2;
     let count: u32 = num.len() as u32;
@@ -26,6 +49,7 @@ fn score(num: &Vec<u8>) -> i32 {
     }
 }
 
+// Returns which winning numbers are in this game string
 fn winning_numbers(input: &str) -> Vec<u8> {
     let split = game_and_data(input);
     let split2 = winning_and_expected(split[1]);
@@ -55,11 +79,6 @@ fn numbers(input: &str) -> Vec<u8> {
         .collect()
 }
 
-// #[allow(dead_code)]
-// fn aoc_4_2(path: &str) {
-    
-// }
-
 #[cfg(test)]
 mod tests{
     use super::*;
@@ -70,6 +89,12 @@ mod tests{
     fn aoc_4_1_test() {
         assert_eq!(13, aoc_4_1(EXAMPLE_01));
         assert_eq!(25004, aoc_4_1(ACTUAL));
+    }
+
+    #[test]
+    fn aoc_4_2_test() {
+        assert_eq!(30, aoc_4_2(EXAMPLE_01));
+        // assert_eq!(25004, aoc_4_1(ACTUAL));
     }
 
     #[test]
