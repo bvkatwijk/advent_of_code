@@ -1,4 +1,4 @@
-use std::{convert::TryInto, cmp, collections::HashMap};
+use std::{cmp, collections::HashMap};
 
 use helper;
 
@@ -18,25 +18,36 @@ fn aoc_4_1(path: &str) -> i32 {
 
 #[allow(dead_code)]
 fn aoc_4_2(path: &str) -> u32 {
-    let game_lines: Vec<String> = helper::file_lines(&path).map(|l| l.unwrap()).collect();
+    let game_lines = game_lines(path);
+    number_of_sheets(game_lines)
+}
+
+fn number_of_sheets(game_lines: Vec<String>) -> u32 {
     let total_games = game_lines.len() as u8;
     let mut game_card_count: HashMap<u8, u8> = HashMap::new();
 
     for (pos, line) in game_lines.iter().enumerate() {
-        let game = (pos) as u8;
-        println!("Game {}", game);
+        let game = (pos + 1) as u8;
+        let game_weight = *game_card_count.entry(game).or_insert(1);
+        println!("Game {} weight: {}", game, game_weight);
         let score = winning_number_count(&line);
         
-        for it in 0..score {
+        for it in 1..score {
             let game_offset = (it + game) as u8;
+            println!("Setting weight of game {}", game_offset);
             if game_offset < total_games {
                 let game_count = game_card_count.entry(game_offset).or_insert(1);
-                *game_count += score;
-                println!("Game {} scores {:?}", game_offset, score);
+                *game_count += game_weight;
             }
         }
     }
-    game_card_count.values().map(|u| *u as u32).sum()
+    game_card_count.values()
+        .map(|u| *u as u32)
+        .sum()
+}
+
+fn game_lines(path: &str) -> Vec<String> {
+    helper::file_lines(&path).map(|l| l.unwrap()).collect()
 }
 
 // Returns amount of winning numbers in this game string
@@ -93,6 +104,7 @@ mod tests{
     use super::*;
 
     const GAME_1: &str = "Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53";
+    const GAME_2: &str = "Card 2: 13 32 20 16 61 | 61 30 68 82 17 32 24 19";
 
     #[test]
     fn aoc_4_1_test() {
@@ -104,6 +116,13 @@ mod tests{
     fn aoc_4_2_test() {
         assert_eq!(30, aoc_4_2(EXAMPLE_01));
         // assert_eq!(25004, aoc_4_1(ACTUAL));
+    }
+
+    #[test]
+    fn number_of_sheets_test() {
+        assert_eq!(1, number_of_sheets(vec![GAME_1.to_string()]));
+        assert_eq!(1, number_of_sheets(vec![GAME_2.to_string()]));
+        assert_eq!(3, number_of_sheets(vec![GAME_1.to_string(), GAME_2.to_string()]));
     }
 
     #[test]
