@@ -34,8 +34,7 @@ fn number_of_sheets(game_lines: Vec<String>) -> u32 {
         
         for it in 1..score {
             let game_offset = (it + game) as u8;
-            println!("Setting weight of game {}", game_offset);
-            if game_offset < total_games {
+            if game_offset <= total_games {
                 let game_count = game_card_count.entry(game_offset).or_insert(1);
                 *game_count += game_weight;
             }
