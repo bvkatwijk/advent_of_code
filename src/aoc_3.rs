@@ -18,21 +18,19 @@ fn numbers_in_matrix(matrix: &Vec<Vec<String>>) -> Vec<Number> {
         .collect()
 }
 
-fn numbers_in_line(source: &Vec<String>, line: u8) -> Vec<Number> {
-    vec![
-        Number {
-            value: 467,
+fn numbers_in_line(input: &Vec<String>, line: u8) -> Vec<Number> {
+    input
+        .concat()   
+        .split(|c: char| !c.is_digit(10))
+        .filter(|s| !s.is_empty()) 
+        .map(|s| s.parse::<u32>().unwrap())
+        .map(|i| Number {
+            value: i,
             line: line,
             start_x: 0,
             end_x: 2
-        },
-        Number {
-            value: 467,
-            line: line,
-            start_x: 0,
-            end_x: 2
-        }
-    ]
+        })
+        .collect()
 }
 
 #[allow(dead_code)]
@@ -43,10 +41,18 @@ fn aoc_3_2(path: &str) {
 
 #[derive(Debug, PartialEq, Eq, Hash)]
 struct Number {
-    value: u16,
+    value: u32,
     line: u8,
     start_x: u8,
     end_x: u8
+}
+
+fn tmptmp(input: &str) -> Vec<u32> {
+    input
+        .split(|c: char| !c.is_digit(10))
+        .filter(|s| !s.is_empty()) 
+        .map(|s| s.parse::<u32>().unwrap())  
+        .collect()
 }
 
 fn matrix(path: &str) -> Vec<Vec<String>> {
@@ -121,5 +127,12 @@ mod tests{
         let result = numbers_in_line(&line_to_vec(LINE_1), 0);
         assert_eq!(no_467, result[0]);
         assert_eq!(no_114, result[1]);
+    }
+
+    #[test]
+    fn tmp() {
+        let result = tmptmp(LINE_1);
+        assert_eq!(467, result[0]);
+        assert_eq!(114, result[1]);
     }
 }
