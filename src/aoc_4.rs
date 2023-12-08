@@ -24,19 +24,17 @@ fn aoc_4_2(path: &str) -> u32 {
 
 fn number_of_sheets(game_lines: Vec<String>) -> u32 {
     let total_games = game_lines.len() as u8;
-    let mut game_card_count: HashMap<u8, u8> = HashMap::new();
+    let mut game_card_count: HashMap<u8, u32> = HashMap::new();
 
     for (pos, line) in game_lines.iter().enumerate() {
         let game = (pos + 1) as u8;
         let game_weight = *game_card_count.entry(game).or_insert(1);
-        println!("Game {} weight: {}", game, game_weight);
-        let score = winning_number_count(&line);
+        let score: u8 = winning_number_count(&line);
         
-        for it in 1..score {
-            let game_offset = (it + game) as u8;
+        for it in 0..score {
+            let game_offset = (1 + it + game) as u8;
             if game_offset <= total_games {
-                let game_count = game_card_count.entry(game_offset).or_insert(1);
-                *game_count += game_weight;
+                *game_card_count.entry(game_offset).or_insert(1) += game_weight;
             }
         }
     }
@@ -104,6 +102,10 @@ mod tests{
 
     const GAME_1: &str = "Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53";
     const GAME_2: &str = "Card 2: 13 32 20 16 61 | 61 30 68 82 17 32 24 19";
+    const GAME_3: &str = "Card 3:  1 21 53 59 44 | 69 82 63 72 16 21 14  1";
+    const GAME_4: &str = "Card 4: 41 92 73 84 69 | 59 84 76 51 58  5 54 83";
+    const GAME_5: &str = "Card 5: 87 83 26 28 32 | 88 30 70 12 93 22 82 36";
+    const GAME_6: &str = "Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11";
 
     #[test]
     fn aoc_4_1_test() {
@@ -114,14 +116,24 @@ mod tests{
     #[test]
     fn aoc_4_2_test() {
         assert_eq!(30, aoc_4_2(EXAMPLE_01));
-        // assert_eq!(25004, aoc_4_1(ACTUAL));
+        assert_eq!(14427616, aoc_4_2(ACTUAL));
     }
 
     #[test]
     fn number_of_sheets_test() {
         assert_eq!(1, number_of_sheets(vec![GAME_1.to_string()]));
         assert_eq!(1, number_of_sheets(vec![GAME_2.to_string()]));
-        assert_eq!(3, number_of_sheets(vec![GAME_1.to_string(), GAME_2.to_string()]));
+        assert_eq!(1, number_of_sheets(vec![GAME_3.to_string()]));
+
+        assert_eq!(3, number_of_sheets(own(vec![GAME_1, GAME_2])));
+        assert_eq!(7, number_of_sheets(own(vec![GAME_1, GAME_2, GAME_3])));
+        assert_eq!(15, number_of_sheets(own(vec![GAME_1, GAME_2, GAME_3, GAME_4])));
+        assert_eq!(29, number_of_sheets(own(vec![GAME_1, GAME_2, GAME_3, GAME_4, GAME_5])));
+        assert_eq!(30, number_of_sheets(own(vec![GAME_1, GAME_2, GAME_3, GAME_4, GAME_5, GAME_6])));
+    }
+
+    fn own(lines: Vec<&str>) -> Vec<String>{
+        lines.iter().map(|s| s.to_string()).collect()
     }
 
     #[test]
