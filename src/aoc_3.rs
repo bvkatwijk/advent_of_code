@@ -47,14 +47,6 @@ struct Number {
     end_x: u8
 }
 
-fn tmptmp(input: &str) -> Vec<u32> {
-    input
-        .split(|c: char| !c.is_digit(10))
-        .filter(|s| !s.is_empty()) 
-        .map(|s| s.parse::<u32>().unwrap())  
-        .collect()
-}
-
 fn matrix(path: &str) -> Vec<Vec<String>> {
     helper::file_lines(path)
         .map(|l: Result<String, std::io::Error>| l.unwrap())
@@ -127,12 +119,5 @@ mod tests{
         let result = numbers_in_line(&line_to_vec(LINE_1), 0);
         assert_eq!(no_467, result[0]);
         assert_eq!(no_114, result[1]);
-    }
-
-    #[test]
-    fn tmp() {
-        let result = tmptmp(LINE_1);
-        assert_eq!(467, result[0]);
-        assert_eq!(114, result[1]);
     }
 }
