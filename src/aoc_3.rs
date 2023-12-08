@@ -8,14 +8,27 @@ const ACTUAL: &str = "./src/aoc_3/03_01.txt";
 #[allow(dead_code)]
 fn aoc_3_1(path: &str) {
     let matrix = matrix(path);
-    let numbers = numbers(&matrix);
+    let numbers = numbers_in_matrix(&matrix);
 }
 
-fn numbers(matrix: &Vec<Vec<String>>) -> Vec<Number> {
+fn numbers_in_matrix(matrix: &Vec<Vec<String>>) -> Vec<Number> {
+    matrix.iter()
+        .enumerate()
+        .flat_map(|(index, value)| numbers_in_line(value, index as u8))
+        .collect()
+}
+
+fn numbers_in_line(source: &Vec<String>, line: u8) -> Vec<Number> {
     vec![
         Number {
             value: 467,
-            line: 0,
+            line: line,
+            start_x: 0,
+            end_x: 2
+        },
+        Number {
+            value: 467,
+            line: line,
             start_x: 0,
             end_x: 2
         }
@@ -73,13 +86,40 @@ mod tests{
     }
 
     #[test]
-    fn numbers_test() {
-        let no_1 = Number {
+    fn numbers_in_matrix_test() {
+        let no_467 = Number {
             value: 467,
             line: 0,
             start_x: 0,
             end_x: 2
         };
-        assert_eq!(no_1, numbers(&vec![line_to_vec(LINE_1)])[0]);
+        let no_114 = Number {
+            value: 114,
+            line: 0,
+            start_x: 5,
+            end_x: 7
+        };
+        let result = numbers_in_matrix(&vec![line_to_vec(LINE_1)]);
+        assert_eq!(no_467, result[0]);
+        assert_eq!(no_114, result[1]);
+    }
+
+    #[test]
+    fn numbers_in_line_test() {
+        let no_467 = Number {
+            value: 467,
+            line: 0,
+            start_x: 0,
+            end_x: 2
+        };
+        let no_114 = Number {
+            value: 114,
+            line: 0,
+            start_x: 5,
+            end_x: 7
+        };
+        let result = numbers_in_line(&line_to_vec(LINE_1), 0);
+        assert_eq!(no_467, result[0]);
+        assert_eq!(no_114, result[1]);
     }
 }
