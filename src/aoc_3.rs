@@ -1,3 +1,5 @@
+use std::ops::Index;
+
 use helper;
 
 #[allow(dead_code)]
@@ -24,11 +26,15 @@ fn numbers_in_line(input: &Vec<String>, line: u8) -> Vec<Number> {
         .split(|c: char| !c.is_digit(10))
         .filter(|s| !s.is_empty()) 
         .map(|s| s.parse::<u32>().unwrap())
-        .map(|i| Number {
-            value: i,
-            line: line,
-            start_x: 0,
-            end_x: 2
+        .map(|i| {
+            let x = input.concat().find(&i.to_string()).unwrap() as u8;
+            let len = i.to_string().len() as u8;
+            Number {
+                value: i,
+                line: line,
+                start_x: x,
+                end_x: x + (len - 1)
+            }
         })
         .collect()
 }
