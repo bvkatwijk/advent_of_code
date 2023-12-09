@@ -84,6 +84,18 @@ mod tests{
         start_x: 0,
         end_x: 2
     };
+    const NO_664: Number  = Number {
+        value: 664,
+        line: 1,
+        start_x: 1,
+        end_x: 3
+    };
+    const NO_598: Number = Number {
+        value: 598,
+        line: 1,
+        start_x: 5,
+        end_x: 7
+    };
 
     #[test]
     fn matrix_test() {
@@ -103,15 +115,18 @@ mod tests{
 
     #[test]
     fn numbers_in_matrix_test() {
-        let result = numbers_in_matrix(&vec![line_to_vec(LINE_1)]);
+        let result = numbers_in_matrix(&vec![line_to_vec(LINE_1), line_to_vec(LINE_10)]);
         assert_eq!(NO_467, result[0]);
         assert_eq!(NO_114, result[1]);
     }
 
     #[test]
     fn numbers_in_line_test() {
-        let result = numbers_in_line(&line_to_vec(LINE_1), 0);
-        assert_eq!(NO_467, result[0]);
-        assert_eq!(NO_114, result[1]);
+        let line_0 = numbers_in_line(&line_to_vec(LINE_1), 0);
+        let line_9 = numbers_in_line(&line_to_vec(LINE_10), 1);
+        assert_eq!(NO_467, line_0[0]);
+        assert_eq!(NO_114, line_0[1]);
+        assert_eq!(NO_664, line_9[0]);
+        assert_eq!(NO_598, line_9[1]);
     }
 }
