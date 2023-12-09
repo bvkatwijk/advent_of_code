@@ -72,6 +72,18 @@ mod tests{
 
     const LINE_1: &str = "467..114..";
     const LINE_10: &str = ".664.598..";
+    const NO_114: Number  = Number {
+        value: 114,
+        line: 0,
+        start_x: 5,
+        end_x: 7
+    };
+    const NO_467: Number = Number {
+        value: 467,
+        line: 0,
+        start_x: 0,
+        end_x: 2
+    };
 
     #[test]
     fn matrix_test() {
@@ -91,39 +103,15 @@ mod tests{
 
     #[test]
     fn numbers_in_matrix_test() {
-        let no_467 = Number {
-            value: 467,
-            line: 0,
-            start_x: 0,
-            end_x: 2
-        };
-        let no_114 = Number {
-            value: 114,
-            line: 0,
-            start_x: 5,
-            end_x: 7
-        };
         let result = numbers_in_matrix(&vec![line_to_vec(LINE_1)]);
-        assert_eq!(no_467, result[0]);
-        assert_eq!(no_114, result[1]);
+        assert_eq!(NO_467, result[0]);
+        assert_eq!(NO_114, result[1]);
     }
 
     #[test]
     fn numbers_in_line_test() {
-        let no_467 = Number {
-            value: 467,
-            line: 0,
-            start_x: 0,
-            end_x: 2
-        };
-        let no_114 = Number {
-            value: 114,
-            line: 0,
-            start_x: 5,
-            end_x: 7
-        };
         let result = numbers_in_line(&line_to_vec(LINE_1), 0);
-        assert_eq!(no_467, result[0]);
-        assert_eq!(no_114, result[1]);
+        assert_eq!(NO_467, result[0]);
+        assert_eq!(NO_114, result[1]);
     }
 }
