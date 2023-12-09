@@ -1,5 +1,3 @@
-use std::ops::Index;
-
 use helper;
 
 #[allow(dead_code)]
@@ -10,9 +8,10 @@ const ACTUAL: &str = "./src/aoc_3/03_01.txt";
 #[allow(dead_code)]
 fn aoc_3_1(path: &str) {
     let matrix = matrix(path);
-    let numbers = numbers_in_matrix(&matrix);
+    let _numbers = numbers_in_matrix(&matrix);
 }
 
+// Returns a Vec of Numbers from the given matrix
 fn numbers_in_matrix(matrix: &Vec<Vec<String>>) -> Vec<Number> {
     matrix.iter()
         .enumerate()
@@ -20,6 +19,7 @@ fn numbers_in_matrix(matrix: &Vec<Vec<String>>) -> Vec<Number> {
         .collect()
 }
 
+// Returns a Vec of Numbers from the given line
 fn numbers_in_line(input: &Vec<String>, line: u8) -> Vec<Number> {
     input
         .concat()   
@@ -31,7 +31,7 @@ fn numbers_in_line(input: &Vec<String>, line: u8) -> Vec<Number> {
             let len = i.to_string().len() as u8;
             Number {
                 value: i,
-                line: line,
+                line: line as usize,
                 start_x: x,
                 end_x: x + (len - 1)
             }
@@ -40,15 +40,28 @@ fn numbers_in_line(input: &Vec<String>, line: u8) -> Vec<Number> {
 }
 
 #[allow(dead_code)]
-fn aoc_3_2(path: &str) {
-    
+// Returns vector of adjacent symbols
+fn adjacent_symbols(matrix: &Vec<Vec<String>>, number: Number) -> Vec<&str> {
+    let line_above = match number.line {
+        0 => 0,
+        _ => number.line - 1
+    };
+    let line_below = std::cmp::min(matrix.len() - 1, number.line + 1);
+    matrix[line_above..line_below]
+        .iter()
+        .collect()
 }
+
+// #[allow(dead_code)]
+// fn aoc_3_2(path: &str) {
+    
+// }
 
 
 #[derive(Debug, PartialEq, Eq, Hash)]
 struct Number {
     value: u32,
-    line: u8,
+    line: usize,
     start_x: u8,
     end_x: u8
 }
@@ -128,5 +141,12 @@ mod tests{
         assert_eq!(NO_114, line_0[1]);
         assert_eq!(NO_664, line_9[0]);
         assert_eq!(NO_598, line_9[1]);
+    }
+
+    #[test]
+    fn adjacent_symbols_test() {
+        let matrix = &vec![line_to_vec(LINE_1)];
+        assert_eq!(vec!["."], adjacent_symbols(matrix, NO_467));
+        assert_eq!(vec![".", "."], adjacent_symbols(matrix, NO_114));
     }
 }
