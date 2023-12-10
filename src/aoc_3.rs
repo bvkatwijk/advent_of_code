@@ -6,10 +6,16 @@ const EXAMPLE_01: &str = "./src/aoc_3/03_01_example.txt";
 const ACTUAL: &str = "./src/aoc_3/03_01.txt";
 
 #[allow(dead_code)]
-fn aoc_3_1(path: &str) {
+fn aoc_3_1(path: &str) -> u32 {
     let matrix: Vec<String> = matrix(path);
-    let x = matrix.iter().map(String::as_str).collect();
-    let _numbers = numbers_in_matrix(x);
+    let matrix_as_str: Vec<&str> = matrix.iter().map(String::as_str).collect();
+    matrix_as_str
+        .iter()
+        .enumerate()
+        .flat_map(|(index, value)| numbers_in_line(value, index as u8))
+        .filter(|n| adjacent_symbols(&matrix, n).is_empty())
+        .map(|n| n.value)
+        .sum()
 }
 
 // Returns a Vec of Numbers from the given matrix
@@ -42,28 +48,30 @@ fn numbers_in_line(input: &str, line: u8) -> Vec<Number> {
 
 #[allow(dead_code)]
 // Returns vector of adjacent symbols
-fn adjacent_symbols(grid: &Vec<String>, number: Number) -> Vec<&str> {
+fn adjacent_symbols<'a>(grid: &'a Vec<String>, number: &Number) -> Vec<String> {
     let line_above: usize = match number.line {
         0 => 0,
         _ => number.line - 1,
     };
-    // println!("line_above {}", line_above);
+    println!("line_above {}", line_above);
     let line_below = std::cmp::min(grid.len() - 1, number.line + 2);
-    // println!("line_below {}", line_below);
+    println!("line_below {}", line_below);
     let x_start = match number.start_x {
         0 => 0,
         _ => number.start_x - 1,
     };
-    // println!("x_start {}", x_start);
+    println!("x_start {}", x_start);
     let x_end = std::cmp::min(grid[0].len() - 1, number.end_x + 2);
-    // println!("x_end {}", x_end);
-    grid[line_above..line_below + 1]
+    println!("x_end {}", x_end);
+    let sections: Vec<&str> = grid[line_above..line_below + 1]
         .iter()
         .map(|s| &s[x_start..x_end])
-        // .map(|s| {
-        //     println!("s: {}", &s);
-        //     return s;
-        // })
+        .collect();
+    sections.concat()
+        .chars()
+        .filter(|c| !c.is_digit(10))
+        .filter(|c| !c.eq(&'.'))
+        .map(|c| c.to_string())
         .collect()
 }
 
@@ -91,6 +99,7 @@ mod tests {
     use super::*;
 
     const LINE_1: &str = "467..114..";
+    const LINE_2: &str = "...*......";
     const LINE_10: &str = ".664.598..";
     const NO_114: Number = Number {
         value: 114,
@@ -118,6 +127,11 @@ mod tests {
     };
 
     #[test]
+    fn aoc_3_1_test() {
+        assert_eq!(4361, aoc_3_1(EXAMPLE_01));
+    }
+
+    #[test]
     fn matrix_test() {
         assert_eq!(LINE_1, matrix(EXAMPLE_01)[0]);
     }
@@ -141,8 +155,13 @@ mod tests {
 
     #[test]
     fn adjacent_symbols_test() {
-        let matrix = vec![LINE_1.to_string()];
-        assert_eq!(vec!["467."], adjacent_symbols(&matrix, NO_467));
-        assert_eq!(vec![".114."], adjacent_symbols(&matrix, NO_114));
+        let empty: Vec<&str> = vec![];
+        let matrix_line_1 = vec![LINE_1.to_string()];
+        assert_eq!(empty, adjacent_symbols(&matrix_line_1, &NO_467));
+        assert_eq!(empty, adjacent_symbols(&matrix_line_1, &NO_114));
+        let matrix_line_1_2 = vec![LINE_1.to_string(), LINE_2.to_string()];
+        assert_eq!(vec!["*"], adjacent_symbols(&matrix_line_1_2, &NO_467));
+        let matrix = matrix(EXAMPLE_01);
+        assert_eq!(empty, adjacent_symbols(&matrix, &NO_114));
     }
 }
