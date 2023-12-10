@@ -7,12 +7,13 @@ const ACTUAL: &str = "./src/aoc_3/03_01.txt";
 
 #[allow(dead_code)]
 fn aoc_3_1(path: &str) {
-    let matrix = matrix(path);
-    let _numbers = numbers_in_matrix(&matrix);
+    let matrix: Vec<String> = matrix(path);
+    let x = matrix.iter().map(String::as_str).collect();
+    let _numbers = numbers_in_matrix(x);
 }
 
 // Returns a Vec of Numbers from the given matrix
-fn numbers_in_matrix(matrix: &Vec<Vec<String>>) -> Vec<Number> {
+fn numbers_in_matrix(matrix: Vec<&str>) -> Vec<Number> {
     matrix.iter()
         .enumerate()
         .flat_map(|(index, value)| numbers_in_line(value, index as u8))
@@ -20,15 +21,14 @@ fn numbers_in_matrix(matrix: &Vec<Vec<String>>) -> Vec<Number> {
 }
 
 // Returns a Vec of Numbers from the given line
-fn numbers_in_line(input: &Vec<String>, line: u8) -> Vec<Number> {
+fn numbers_in_line(input: &str, line: u8) -> Vec<Number> {
     input
-        .concat()   
         .split(|c: char| !c.is_digit(10))
         .filter(|s| !s.is_empty()) 
         .map(|s| s.parse::<u32>().unwrap())
         .map(|i| {
-            let x = input.concat().find(&i.to_string()).unwrap() as u8;
-            let len = i.to_string().len() as u8;
+            let x = input.find(&i.to_string()).unwrap();
+            let len = i.to_string().len();
             Number {
                 value: i,
                 line: line as usize,
@@ -41,14 +41,15 @@ fn numbers_in_line(input: &Vec<String>, line: u8) -> Vec<Number> {
 
 #[allow(dead_code)]
 // Returns vector of adjacent symbols
-fn adjacent_symbols(matrix: &Vec<Vec<String>>, number: Number) -> Vec<&str> {
-    let line_above = match number.line {
+fn adjacent_symbols(grid: &Vec<String>, number: Number) -> Vec<&str> {
+    let line_above: usize = match number.line {
         0 => 0,
         _ => number.line - 1
     };
-    let line_below = std::cmp::min(matrix.len() - 1, number.line + 1);
-    matrix[line_above..line_below]
+    let line_below = std::cmp::min(grid.len() - 1, number.line + 1);
+    grid[line_above..line_below]
         .iter()
+        .map(|s| &s[number.start_x-1..number.end_x+1])
         .collect()
 }
 
@@ -62,20 +63,13 @@ fn adjacent_symbols(matrix: &Vec<Vec<String>>, number: Number) -> Vec<&str> {
 struct Number {
     value: u32,
     line: usize,
-    start_x: u8,
-    end_x: u8
+    start_x: usize,
+    end_x: usize
 }
 
-fn matrix(path: &str) -> Vec<Vec<String>> {
+fn matrix(path: &str) -> Vec<String> {
     helper::file_lines(path)
         .map(|l: Result<String, std::io::Error>| l.unwrap())
-        .map(|l| line_to_vec(&l))
-        .collect()
-}
-
-fn line_to_vec(input: &str) -> Vec<String> {
-    input.chars()
-        .map(|c| c.to_string())
         .collect()
 }
 
@@ -112,31 +106,20 @@ mod tests{
 
     #[test]
     fn matrix_test() {
-        assert_eq!("4", matrix(EXAMPLE_01)[0][0]);
-        assert_eq!("6", matrix(EXAMPLE_01)[0][1]);
-        assert_eq!("7", matrix(EXAMPLE_01)[0][2]);
-        assert_eq!(".", matrix(EXAMPLE_01)[0][3]);
-        assert_eq!("1", matrix(EXAMPLE_01)[0][6]);
-        assert_eq!("4", matrix(EXAMPLE_01)[0][7]);
-        assert_eq!("8", matrix(EXAMPLE_01)[9][7]);
-    }
-
-    #[test]
-    fn line_to_vec_test() {
-        assert_eq!("4", line_to_vec(LINE_1)[0]);
+        assert_eq!(LINE_1, matrix(EXAMPLE_01)[0]);
     }
 
     #[test]
     fn numbers_in_matrix_test() {
-        let result = numbers_in_matrix(&vec![line_to_vec(LINE_1), line_to_vec(LINE_10)]);
+        let result = numbers_in_matrix(vec![LINE_1, LINE_10]);
         assert_eq!(NO_467, result[0]);
         assert_eq!(NO_114, result[1]);
     }
 
     #[test]
     fn numbers_in_line_test() {
-        let line_0 = numbers_in_line(&line_to_vec(LINE_1), 0);
-        let line_9 = numbers_in_line(&line_to_vec(LINE_10), 1);
+        let line_0 = numbers_in_line(LINE_1, 0);
+        let line_9 = numbers_in_line(LINE_10, 1);
         assert_eq!(NO_467, line_0[0]);
         assert_eq!(NO_114, line_0[1]);
         assert_eq!(NO_664, line_9[0]);
@@ -145,8 +128,8 @@ mod tests{
 
     #[test]
     fn adjacent_symbols_test() {
-        let matrix = &vec![line_to_vec(LINE_1)];
-        assert_eq!(vec!["."], adjacent_symbols(matrix, NO_467));
-        assert_eq!(vec![".", "."], adjacent_symbols(matrix, NO_114));
+        let matrix = vec![LINE_1.to_string()];
+        assert_eq!(vec!["."], adjacent_symbols(&matrix, NO_467));
+        assert_eq!(vec![".", "."], adjacent_symbols(&matrix, NO_114));
     }
 }
