@@ -47,23 +47,23 @@ fn adjacent_symbols(grid: &Vec<String>, number: Number) -> Vec<&str> {
         0 => 0,
         _ => number.line - 1,
     };
-    println!("line_above {}", line_above);
+    // println!("line_above {}", line_above);
     let line_below = std::cmp::min(grid.len() - 1, number.line + 2);
-    println!("line_below {}", line_below);
+    // println!("line_below {}", line_below);
     let x_start = match number.start_x {
         0 => 0,
         _ => number.start_x - 1,
     };
-    println!("x_start {}", x_start);
+    // println!("x_start {}", x_start);
     let x_end = std::cmp::min(grid[0].len() - 1, number.end_x + 2);
-    println!("x_end {}", x_end);
+    // println!("x_end {}", x_end);
     grid[line_above..line_below + 1]
         .iter()
-        .map(|s| &s[x_start..number.end_x])
-        .map(|s| {
-            println!("s: {}", &s);
-            return s;
-        })
+        .map(|s| &s[x_start..x_end])
+        // .map(|s| {
+        //     println!("s: {}", &s);
+        //     return s;
+        // })
         .collect()
 }
 
@@ -142,7 +142,7 @@ mod tests {
     #[test]
     fn adjacent_symbols_test() {
         let matrix = vec![LINE_1.to_string()];
-        assert_eq!(vec!["."], adjacent_symbols(&matrix, NO_467));
-        assert_eq!(vec![".", "."], adjacent_symbols(&matrix, NO_114));
+        assert_eq!(vec!["467."], adjacent_symbols(&matrix, NO_467));
+        assert_eq!(vec![".114."], adjacent_symbols(&matrix, NO_114));
     }
 }
