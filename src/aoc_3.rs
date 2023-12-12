@@ -56,7 +56,6 @@ fn adjacent_symbols<'a>(grid: &'a Vec<String>, number: &Number) -> Vec<String> {
     let x_end = std::cmp::min(grid[0].len() - 1, number.end_x + 1);
     let sections: Vec<&str> = grid[line_above..line_below+1]
         .iter()
-        .map(|s| &s[x_start..x_end])
         .map(|s| &s[x_start..x_end+1])
         .collect();
     sections.concat()
