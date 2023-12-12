@@ -18,15 +18,6 @@ fn aoc_3_1(path: &str) -> u32 {
         .sum()
 }
 
-// Returns a Vec of Numbers from the given matrix
-fn numbers_in_matrix(matrix: Vec<&str>) -> Vec<Number> {
-    matrix
-        .iter()
-        .enumerate()
-        .flat_map(|(index, value)| numbers_in_line(value, index as u8))
-        .collect()
-}
-
 // Returns a Vec of Numbers from the given line
 fn numbers_in_line(input: &str, line: u8) -> Vec<Number> {
     input
@@ -134,13 +125,6 @@ mod tests {
     #[test]
     fn matrix_test() {
         assert_eq!(LINE_1, matrix(EXAMPLE_01)[0]);
-    }
-
-    #[test]
-    fn numbers_in_matrix_test() {
-        let result = numbers_in_matrix(vec![LINE_1, LINE_10]);
-        assert_eq!(NO_467, result[0]);
-        assert_eq!(NO_114, result[1]);
     }
 
     #[test]
