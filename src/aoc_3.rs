@@ -45,18 +45,19 @@ fn adjacent_symbols<'a>(grid: &'a Vec<String>, number: &Number) -> Vec<String> {
         _ => number.line - 1,
     };
     println!("line_above {}", line_above);
-    let line_below = std::cmp::min(grid.len() - 1, number.line + 2);
     println!("line_below {}", line_below);
+    let line_below = std::cmp::min(grid.len() - 1, number.line + 1);
     let x_start = match number.start_x {
         0 => 0,
         _ => number.start_x - 1,
     };
     println!("x_start {}", x_start);
-    let x_end = std::cmp::min(grid[0].len() - 1, number.end_x + 2);
     println!("x_end {}", x_end);
-    let sections: Vec<&str> = grid[line_above..line_below + 1]
+    let x_end = std::cmp::min(grid[0].len() - 1, number.end_x + 1);
+    let sections: Vec<&str> = grid[line_above..line_below+1]
         .iter()
         .map(|s| &s[x_start..x_end])
+        .map(|s| &s[x_start..x_end+1])
         .collect();
     sections.concat()
         .chars()
@@ -120,6 +121,10 @@ mod tests {
     #[test]
     fn aoc_3_1_test() {
         assert_eq!(4361, aoc_3_1(EXAMPLE_01));
+        assert_ne!(525020, aoc_3_1(ACTUAL)); // wrong, too low :(
+        assert_ne!(536151, aoc_3_1(ACTUAL)); // wrong, too high :(
+        assert_ne!(532910, aoc_3_1(ACTUAL)); // wrong, too high :(
+        assert_eq!(1, aoc_3_1(ACTUAL)); // wrong, too high :(
     }
 
     #[test]
@@ -147,5 +152,6 @@ mod tests {
         assert_eq!(vec!["*"], adjacent_symbols(&matrix_line_1_2, &NO_467));
         let matrix = matrix(EXAMPLE_01);
         assert_eq!(empty, adjacent_symbols(&matrix, &NO_114));
+        assert_eq!(vec!["*"], adjacent_symbols(&matrix, &NO_467));
     }
 }
