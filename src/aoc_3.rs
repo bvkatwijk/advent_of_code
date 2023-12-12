@@ -13,7 +13,7 @@ fn aoc_3_1(path: &str) -> u32 {
         .iter()
         .enumerate()
         .flat_map(|(index, value)| numbers_in_line(value, index as u8))
-        .filter(|n| adjacent_symbols(&matrix, n).is_empty())
+        .filter(|n| !adjacent_symbols(&matrix, n).is_empty())
         .map(|n| n.value)
         .sum()
 }
