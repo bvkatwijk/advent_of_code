@@ -3,6 +3,8 @@ use helper;
 #[allow(dead_code)]
 const EXAMPLE_01: &str = "./src/aoc_3/03_01_example.txt";
 #[allow(dead_code)]
+const CUSTOM: &str = "./src/aoc_3/03_01_custom.txt";
+#[allow(dead_code)]
 const ACTUAL: &str = "./src/aoc_3/03_01.txt";
 
 #[allow(dead_code)]
@@ -44,16 +46,16 @@ fn adjacent_symbols<'a>(grid: &'a Vec<String>, number: &Number) -> Vec<String> {
         0 => 0,
         _ => number.line - 1,
     };
-    println!("line_above {}", line_above);
-    println!("line_below {}", line_below);
+    // println!("line_above {}", line_above);
     let line_below = std::cmp::min(grid.len() - 1, number.line + 1);
+    // println!("line_below {}", line_below);
     let x_start = match number.start_x {
         0 => 0,
         _ => number.start_x - 1,
     };
-    println!("x_start {}", x_start);
-    println!("x_end {}", x_end);
+    // println!("x_start {}", x_start);
     let x_end = std::cmp::min(grid[0].len() - 1, number.end_x + 1);
+    // println!("x_end {}", x_end);
     let sections: Vec<&str> = grid[line_above..line_below+1]
         .iter()
         .map(|s| &s[x_start..x_end+1])
@@ -120,6 +122,7 @@ mod tests {
     #[test]
     fn aoc_3_1_test() {
         assert_eq!(4361, aoc_3_1(EXAMPLE_01));
+        assert_eq!(4419, aoc_3_1(CUSTOM));
         assert_ne!(525020, aoc_3_1(ACTUAL)); // wrong, too low :(
         assert_ne!(536151, aoc_3_1(ACTUAL)); // wrong, too high :(
         assert_ne!(532910, aoc_3_1(ACTUAL)); // wrong, too high :(
