@@ -22,7 +22,7 @@ fn aoc_4_1(path: &str) -> u32 {
                 return;
             }
             if !s.is_empty() {
-                let mapping = create_mapping(s);
+                let mapping = create_mapping(&s);
                 let e = line_groups.get_mut(index);
                 if e.is_none() {
                     line_groups.push(vec![mapping]);
@@ -60,6 +60,7 @@ fn map_resource(current: u32, line_groups: &Vec<Mapping>) -> u32 {
     current
 }
 
+#[derive(Debug, PartialEq, Eq, Hash)]
 struct Mapping {
     dest: u32,
     source: u32,
@@ -76,11 +77,14 @@ impl Mapping {
     }
 }
 
-fn create_mapping(s: String) -> Mapping {
+fn create_mapping(s: &str) -> Mapping {
+    let split: Vec<u32> = s.split(" ")
+        .map(|s| s.parse::<u32>().unwrap())
+        .collect();
     Mapping {
-        dest: 0,
-        source: 0,
-        range: 0
+        dest: split[0],
+        source: split[1],
+        range: split[2],
     }
 }
 
@@ -129,5 +133,14 @@ mod tests{
             range: 48
         };
         assert_eq!(81, mapping.map(79));
+    }
+
+    #[test]
+    fn create_mapping_test() {
+        assert_eq!(Mapping {
+            dest: 50,
+            source: 98,
+            range: 2
+        }, create_mapping("50 98 2"));
     }
 }
