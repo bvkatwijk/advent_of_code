@@ -34,7 +34,7 @@ fn aoc_4_1(path: &str) -> u32 {
 
     seeds.split(" ")
         .skip(1)
-        .take(1) // TMP: ONLY CALCULATE FIRST SEED REMOVE THIS
+        // .take(1) // TMP: ONLY CALCULATE FIRST SEED REMOVE THIS
         .map(|s| s.parse::<u32>().unwrap())
         .map(|i| map_resources(i, &line_groups))
         .min()
@@ -94,7 +94,7 @@ mod tests{
 
     #[test]
     fn aoc_4_1_test() {
-        assert_eq!(1, aoc_4_1(EXAMPLE_01));
+        assert_eq!(35, aoc_4_1(EXAMPLE_01));
     }
 
     #[test]
