@@ -126,7 +126,7 @@ mod tests{
             source: 98,
             range: 2
         };
-        assert_eq!(99, mapping.map(51));
+        assert_eq!(51, mapping.map(99));
         let mapping = Mapping {
             dest: 52,
             source: 50,
