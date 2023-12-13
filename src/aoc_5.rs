@@ -9,7 +9,7 @@ const EXAMPLE_01: &str = "./src/aoc_5/05_01_example.txt";
 // const ACTUAL: &str = "./src/aoc_5/05_01.txt";
 
 #[allow(dead_code)]
-fn aoc_4_1(path: &str) -> i32 {
+fn aoc_4_1(path: &str) -> u8 {
     let mut index = 0;
     let mut line_groups: HashMap<u8, Vec<String>> = HashMap::new();
     helper::file_lines(path)
@@ -30,10 +30,13 @@ fn aoc_4_1(path: &str) -> i32 {
         println!("{}: {:#?}", key, value);
     }
 
-    
-
-
-    0
+    line_groups.get(&0)
+        .unwrap()[0]
+        .split(" ")
+        .skip(1)
+        .map(|s| s.parse::<u8>().unwrap())
+        .min()
+        .unwrap()
 }
 
 #[derive(Debug, PartialEq, Eq, Hash)]
