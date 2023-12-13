@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use helper;
+use crate::helper;
 
 #[allow(dead_code)]
 const EXAMPLE_01: &str = "./src/aoc_2/02_01_example.txt";

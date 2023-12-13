@@ -1,4 +1,6 @@
-use helper;
+use std::ops::Index;
+
+use crate::helper;
 
 #[allow(dead_code)]
 const EXAMPLE_01: &str = "./src/aoc_5/05_01_example.txt";
@@ -19,6 +21,8 @@ fn aoc_4_1(path: &str) -> u64 {
 
 #[allow(dead_code)]
 fn aoc_4_2(path: &str) -> u64 {
+    use rayon::prelude::*;
+
     let (seeds, line_groups) = seeds_and_line_groups(path);
     let seed_values: Vec<u64> = seeds.split(" ")
         .skip(1)
@@ -30,7 +34,12 @@ fn aoc_4_2(path: &str) -> u64 {
            range: *seed_values.get(i*2+1).unwrap() 
         })
         .collect();
-    seed_ranges.iter()
+    seed_ranges.par_iter()
+        // .enumerate()
+        // .map(|(i, r)| {
+        //     println!("Progress: {} / {:#?}", i, seed_ranges.len() - 1);
+        //     r
+        // })
         .flat_map(|r| (r.start..r.start+r.range))
         .map(|i| map_resources(i, &line_groups))
         .min()
@@ -123,15 +132,17 @@ mod tests{
     use super::*;
 
     #[test]
-    fn aoc_4_1_test() {
-        assert_eq!(35, aoc_4_1(EXAMPLE_01));
-        assert_eq!(403695602, aoc_4_1(ACTUAL));
+    fn aoc_4_2_test() {
+        assert_eq!(46, aoc_4_2(EXAMPLE_01));
+
+        // Brute force, takes +/- 400 seconds
+        // assert_eq!(219529182, aoc_4_2(ACTUAL));
     }
 
     #[test]
-    fn aoc_4_2_test() {
-        assert_eq!(46, aoc_4_2(EXAMPLE_01));
-        // assert_eq!(403695602, aoc_4_1(ACTUAL));
+    fn aoc_4_1_test() {
+        assert_eq!(35, aoc_4_1(EXAMPLE_01));
+        assert_eq!(403695602, aoc_4_1(ACTUAL));
     }
 
     #[test]
