@@ -72,7 +72,7 @@ impl Mapping {
     }
 
     fn map(&self, value: u32) -> u32 {
-        value
+        value - self.source + self.dest
     }
 }
 
@@ -104,13 +104,29 @@ mod tests{
         assert!(mapping.in_range(79));
         assert!(!mapping.in_range(98));
         assert!(!mapping.in_range(49));
+        let mapping = Mapping {
+            dest: 50,
+            source: 98,
+            range: 2
+        };
+        assert!(mapping.in_range(98));
+        assert!(mapping.in_range(99));
+        assert!(!mapping.in_range(97));
+        assert!(!mapping.in_range(100));
     }
 
+    #[test]
     fn mapping_map_test() {
         let mapping = Mapping {
             dest: 50,
             source: 98,
             range: 2
+        };
+        assert_eq!(99, mapping.map(51));
+        let mapping = Mapping {
+            dest: 52,
+            source: 50,
+            range: 48
         };
         assert_eq!(81, mapping.map(79));
     }
