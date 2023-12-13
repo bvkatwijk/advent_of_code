@@ -2,8 +2,8 @@ use helper;
 
 #[allow(dead_code)]
 const EXAMPLE_01: &str = "./src/aoc_5/05_01_example.txt";
-// #[allow(dead_code)]
-// const ACTUAL: &str = "./src/aoc_5/05_01.txt";
+#[allow(dead_code)]
+const ACTUAL: &str = "./src/aoc_5/05_01_input.txt";
 
 #[allow(dead_code)]
 fn aoc_4_1(path: &str) -> u32 {
@@ -95,6 +95,7 @@ mod tests{
     #[test]
     fn aoc_4_1_test() {
         assert_eq!(35, aoc_4_1(EXAMPLE_01));
+        assert_eq!(35, aoc_4_1(ACTUAL));
     }
 
     #[test]
