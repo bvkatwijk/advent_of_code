@@ -6,7 +6,44 @@ const EXAMPLE_01: &str = "./src/aoc_5/05_01_example.txt";
 const ACTUAL: &str = "./src/aoc_5/05_01_input.txt";
 
 #[allow(dead_code)]
-fn aoc_4_1(path: &str) -> u32 {
+fn aoc_4_1(path: &str) -> u64 {
+    let (seeds, line_groups) = seeds_and_line_groups(path);
+    seeds.split(" ")
+        .skip(1)
+        // .take(1) // TMP: ONLY CALCULATE FIRST SEED REMOVE THIS
+        .map(|s| s.parse::<u64>().unwrap())
+        .map(|i| map_resources(i, &line_groups))
+        .min()
+        .unwrap()
+}
+
+#[allow(dead_code)]
+fn aoc_4_2(path: &str) -> u64 {
+    let (seeds, line_groups) = seeds_and_line_groups(path);
+    let seed_values: Vec<u64> = seeds.split(" ")
+        .skip(1)
+        .map(|s| s.parse::<u64>().unwrap())
+        .collect();
+    let seed_ranges: Vec<SeedRange> = (0..seed_values.len()/2).into_iter()
+        .map(|i| SeedRange {
+           start: *seed_values.get(i*2).unwrap(),
+           range: *seed_values.get(i*2+1).unwrap() 
+        })
+        .collect();
+    seed_ranges.iter()
+        .flat_map(|r| (r.start..r.start+r.range))
+        .map(|i| map_resources(i, &line_groups))
+        .min()
+        .unwrap()
+}
+
+#[derive(Debug, PartialEq, Eq, Hash)]
+struct SeedRange {
+    start: u64,
+    range: u64
+}
+
+fn seeds_and_line_groups(path: &str) -> (String, Vec<Vec<Mapping>>) {
     let mut index = 0;
     let mut line_groups: Vec<Vec<Mapping>> = vec![];
     let mut seeds: String = "EMPTY".to_string();
@@ -31,18 +68,11 @@ fn aoc_4_1(path: &str) -> u32 {
                 }
             }
         });
-
-    seeds.split(" ")
-        .skip(1)
-        // .take(1) // TMP: ONLY CALCULATE FIRST SEED REMOVE THIS
-        .map(|s| s.parse::<u32>().unwrap())
-        .map(|i| map_resources(i, &line_groups))
-        .min()
-        .unwrap()
+    (seeds, line_groups)
 }
 
 // Returns mapped seed value through resource group mappings
-fn map_resources(i: u32, line_groups: &Vec<Vec<Mapping>>) -> u32 {
+fn map_resources(i: u64, line_groups: &Vec<Vec<Mapping>>) -> u64 {
     let mut current = i;
     for line_group in line_groups {
         current = map_resource(current, &line_group);
@@ -51,7 +81,7 @@ fn map_resources(i: u32, line_groups: &Vec<Vec<Mapping>>) -> u32 {
 }
 
 // Returns current value mapped through single resource group mapping
-fn map_resource(current: u32, line_groups: &Vec<Mapping>) -> u32 {
+fn map_resource(current: u64, line_groups: &Vec<Mapping>) -> u64 {
     for mapping in line_groups {
         if mapping.in_range(current) {
             return mapping.map(current);
@@ -62,24 +92,24 @@ fn map_resource(current: u32, line_groups: &Vec<Mapping>) -> u32 {
 
 #[derive(Debug, PartialEq, Eq, Hash)]
 struct Mapping {
-    dest: u32,
-    source: u32,
-    range: u32
+    dest: u64,
+    source: u64,
+    range: u64
 }
 
 impl Mapping {
-    fn in_range(&self, value: u32) -> bool {
+    fn in_range(&self, value: u64) -> bool {
         value >= self.source && value < (self.source + self.range)
     }
 
-    fn map(&self, value: u32) -> u32 {
+    fn map(&self, value: u64) -> u64 {
         value + self.dest - self.source
     }
 }
 
 fn create_mapping(s: &str) -> Mapping {
-    let split: Vec<u32> = s.split(" ")
-        .map(|s| s.parse::<u32>().unwrap())
+    let split: Vec<u64> = s.split(" ")
+        .map(|s| s.parse::<u64>().unwrap())
         .collect();
     Mapping {
         dest: split[0],
@@ -95,7 +125,13 @@ mod tests{
     #[test]
     fn aoc_4_1_test() {
         assert_eq!(35, aoc_4_1(EXAMPLE_01));
-        assert_eq!(35, aoc_4_1(ACTUAL));
+        assert_eq!(403695602, aoc_4_1(ACTUAL));
+    }
+
+    #[test]
+    fn aoc_4_2_test() {
+        assert_eq!(46, aoc_4_2(EXAMPLE_01));
+        // assert_eq!(403695602, aoc_4_1(ACTUAL));
     }
 
     #[test]
