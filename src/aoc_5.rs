@@ -73,7 +73,7 @@ impl Mapping {
     }
 
     fn map(&self, value: u32) -> u32 {
-        value - self.source + self.dest
+        value + self.dest - self.source
     }
 }
 
