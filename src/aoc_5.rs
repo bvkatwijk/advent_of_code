@@ -15,28 +15,23 @@ fn aoc_4_1(path: &str) -> i32 {
     helper::file_lines(path)
         .map(|l| l.unwrap())
         .for_each(|s| {
-            println!("Processing {}", s);
             if s.contains("map") {
                 index += 1;
             }
-
-            if s.is_empty() {
-                return;
+            if !s.is_empty() {
+                line_groups.entry(index)
+                    .or_insert(vec![])
+                    .push(s);
             }
-
-            let mut vec = line_groups.entry(index).or_insert(vec![]);
-            vec.push(s);
         });
 
-    // let seedToSoilMap: HashMap<u8, u8> = mapping()
-    // let resources = vec![Seed, Soil, Fertilizer, Water, Light, Temperature, Humidity, Location];
-    // let mappings: HashMap<>
-    // resources.windows(2)
-    //     .map(|r1, r2| )
-
+    // debug print map
     for (key, value) in &line_groups {
         println!("{}: {:#?}", key, value);
     }
+
+    
+
 
     0
 }
