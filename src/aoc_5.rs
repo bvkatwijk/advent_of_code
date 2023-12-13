@@ -1,7 +1,4 @@
-use std::{collections::HashMap, iter::FromIterator};
-
 use helper;
-use aoc_5::Resource::*;
 
 #[allow(dead_code)]
 const EXAMPLE_01: &str = "./src/aoc_5/05_01_example.txt";
@@ -11,38 +8,31 @@ const EXAMPLE_01: &str = "./src/aoc_5/05_01_example.txt";
 #[allow(dead_code)]
 fn aoc_4_1(path: &str) -> u32 {
     let mut index = 0;
-    let mut line_groups: Vec<Vec<String>> = vec![];
+    let mut line_groups: Vec<Vec<Mapping>> = vec![];
+    let mut seeds: String = "EMPTY".to_string();
     helper::file_lines(path)
         .map(|l| l.unwrap())
         .for_each(|s| {
+            if s.contains("seeds:") {
+                seeds = s;
+                return;
+            }
             if s.contains("map") {
                 index += 1;
+                return;
             }
             if !s.is_empty() {
-                // push string into correct vector
+                let mapping = create_mapping(s);
                 let e = line_groups.get_mut(index);
                 if e.is_none() {
-                    line_groups.push(vec![s]);
+                    line_groups.push(vec![mapping]);
                 } else {
-                    e.unwrap().push(s);
+                    e.unwrap().push(mapping);
                 }
-                    // .map_or(default, f)
-                    // .or_insert(vec![])
-                    // .push(s);
             }
         });
 
-    // Correct length?
-    // assert_eq!(8, line_groups.len());
-
-    // debug print map
-    // for (key, value) in &line_groups {
-    //     println!("{}: {:#?}", key, value);
-    // }
-
-    line_groups.get(0)
-        .unwrap()[0]
-        .split(" ")
+    seeds.split(" ")
         .skip(1)
         .take(1) // TMP: ONLY CALCULATE FIRST SEED REMOVE THIS
         .map(|s| s.parse::<u32>().unwrap())
@@ -52,7 +42,7 @@ fn aoc_4_1(path: &str) -> u32 {
 }
 
 // Returns mapped seed value through resource group mappings
-fn map_resources(i: u32, line_groups: &Vec<Vec<String>>) -> u32 {
+fn map_resources(i: u32, line_groups: &Vec<Vec<Mapping>>) -> u32 {
     let mut current = i;
     for line_group in line_groups {
         current = map_resource(current, &line_group);
@@ -60,35 +50,14 @@ fn map_resources(i: u32, line_groups: &Vec<Vec<String>>) -> u32 {
     current
 }
 
-fn map_resource(current: u32, line_groups: &Vec<String>) -> u32 {
-    // if line group contains line with range overlapping current
-
-    // add diff to current
-
-    // mapped
+// Returns current value mapped through single resource group mapping
+fn map_resource(current: u32, line_groups: &Vec<Mapping>) -> u32 {
+    for mapping in line_groups {
+        if mapping.in_range(current) {
+            return mapping.map(current);
+        }
+    }
     current
-}
-
-#[derive(Debug, PartialEq, Eq, Hash)]
-enum Resource {
-    Seed,
-    Soil,
-    Fertilizer,
-    Water,
-    Light,
-    Temperature,
-    Humidity,
-    Location
-}
-
-enum ResourcePair {
-    SeedToSoil,
-    SoilToFertilizer,
-    FertilizerToWater,
-    WaterToLight,
-    LightToTemperature,
-    TemperatureToHumidity,
-    HumidityToLocation
 }
 
 struct Mapping {
@@ -97,21 +66,22 @@ struct Mapping {
     range: u32
 }
 
-fn from_and_to(pair: &ResourcePair) -> (Resource, Resource) {
-    match pair {
-        ResourcePair::SeedToSoil => (Seed, Soil),
-        ResourcePair::SoilToFertilizer => (Soil, Fertilizer),
-        ResourcePair::FertilizerToWater => (Fertilizer, Water),
-        ResourcePair::WaterToLight => (Water, Light),
-        ResourcePair::LightToTemperature => (Light, Temperature),
-        ResourcePair::TemperatureToHumidity => (Temperature, Humidity),
-        ResourcePair::HumidityToLocation => (Humidity, Location),
+impl Mapping {
+    fn in_range(&self, value: u32) -> bool {
+        value >= self.source && value < (self.source + self.range)
+    }
+
+    fn map(&self, value: u32) -> u32 {
+        value
     }
 }
 
-fn mapping_header<'a>(one: &'a Resource, other: &'a Resource) -> String {
-    format!("{:#?}-to-{:#?} map:", one, other)
-        .to_lowercase()
+fn create_mapping(s: String) -> Mapping {
+    Mapping {
+        dest: 0,
+        source: 0,
+        range: 0
+    }
 }
 
 #[cfg(test)]
@@ -124,7 +94,24 @@ mod tests{
     }
 
     #[test]
-    fn mapping_header_test() {
-        assert_eq!("fertilizer-to-water map:", mapping_header(&Resource::Fertilizer, &Resource::Water));
+    fn mapping_in_range_test() {
+        let mapping = Mapping {
+            dest: 52,
+            source: 50,
+            range: 48
+        };
+        assert!(mapping.in_range(50));
+        assert!(mapping.in_range(79));
+        assert!(!mapping.in_range(98));
+        assert!(!mapping.in_range(49));
+    }
+
+    fn mapping_map_test() {
+        let mapping = Mapping {
+            dest: 50,
+            source: 98,
+            range: 2
+        };
+        assert_eq!(81, mapping.map(79));
     }
 }
