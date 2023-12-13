@@ -9,9 +9,9 @@ const EXAMPLE_01: &str = "./src/aoc_5/05_01_example.txt";
 // const ACTUAL: &str = "./src/aoc_5/05_01.txt";
 
 #[allow(dead_code)]
-fn aoc_4_1(path: &str) -> u8 {
+fn aoc_4_1(path: &str) -> u32 {
     let mut index = 0;
-    let mut line_groups: HashMap<u8, Vec<String>> = HashMap::new();
+    let mut line_groups: Vec<Vec<String>> = vec![];
     helper::file_lines(path)
         .map(|l| l.unwrap())
         .for_each(|s| {
@@ -19,24 +19,54 @@ fn aoc_4_1(path: &str) -> u8 {
                 index += 1;
             }
             if !s.is_empty() {
-                line_groups.entry(index)
-                    .or_insert(vec![])
-                    .push(s);
+                // push string into correct vector
+                let e = line_groups.get_mut(index);
+                if e.is_none() {
+                    line_groups.push(vec![s]);
+                } else {
+                    e.unwrap().push(s);
+                }
+                    // .map_or(default, f)
+                    // .or_insert(vec![])
+                    // .push(s);
             }
         });
 
-    // debug print map
-    for (key, value) in &line_groups {
-        println!("{}: {:#?}", key, value);
-    }
+    // Correct length?
+    // assert_eq!(8, line_groups.len());
 
-    line_groups.get(&0)
+    // debug print map
+    // for (key, value) in &line_groups {
+    //     println!("{}: {:#?}", key, value);
+    // }
+
+    line_groups.get(0)
         .unwrap()[0]
         .split(" ")
         .skip(1)
-        .map(|s| s.parse::<u8>().unwrap())
+        .take(1) // TMP: ONLY CALCULATE FIRST SEED REMOVE THIS
+        .map(|s| s.parse::<u32>().unwrap())
+        .map(|i| map_resources(i, &line_groups))
         .min()
         .unwrap()
+}
+
+// Returns mapped seed value through resource group mappings
+fn map_resources(i: u32, line_groups: &Vec<Vec<String>>) -> u32 {
+    let mut current = i;
+    for line_group in line_groups {
+        current = map_resource(current, &line_group);
+    }
+    current
+}
+
+fn map_resource(current: u32, line_groups: &Vec<String>) -> u32 {
+    // if line group contains line with range overlapping current
+
+    // add diff to current
+
+    // mapped
+    current
 }
 
 #[derive(Debug, PartialEq, Eq, Hash)]
