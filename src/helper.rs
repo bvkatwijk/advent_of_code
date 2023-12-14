@@ -8,3 +8,9 @@ pub fn file_lines(path: &str) -> Lines<BufReader<File>> {
         .map(|it| it.lines())
         .unwrap()
 }
+
+// Print str and return it, useful in function pipelines
+pub fn debug(s: &str) -> &str {
+    println!("current: {}", s);
+    s
+}
