@@ -1,3 +1,5 @@
+use core::num;
+
 use crate::helper;
 
 #[allow(dead_code)]
@@ -7,11 +9,30 @@ const ACTUAL: &str = "./src/aoc_6/01.txt";
 
 #[allow(dead_code)]
 fn aoc_6_1(path: &str) -> u64 {
+    races(path)
+        .iter()
+        .map(|r| ways_to_win(r))
+        .reduce(|a, b| a * b)
+        .unwrap()
+}
+
+fn ways_to_win(race: &Race) -> u64 {
+    2
+}
+
+fn races(path: &str) -> Vec<Race> {
     let number_lines: Vec<Vec<u16>> = helper::file_lines(path)
         .map(|l| l.unwrap())
         .map(|s| line_to_numers(s))
         .collect();
-    0
+    let race_count = number_lines[0].len();
+    (0..race_count)
+        .into_iter()
+        .map(|i| Race {
+            time: number_lines[0][i],
+            record: number_lines[1][i],
+        })
+        .collect()
 }
 
 fn line_to_numers(s: String) -> Vec<u16> {
@@ -19,7 +40,6 @@ fn line_to_numers(s: String) -> Vec<u16> {
         .skip(1)
         .map(|s| s.trim())
         .flat_map(|s| s.split_whitespace())
-        .map(|s| helper::debug(s))
         .map(|s| s.trim())
         .map(|s| s.parse::<u16>().unwrap())
         .collect()
