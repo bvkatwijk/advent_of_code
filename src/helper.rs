@@ -10,7 +10,7 @@ pub fn file_lines(path: &str) -> Lines<BufReader<File>> {
 }
 
 // Print str and return it, useful in function pipelines
-pub fn debug(s: &str) -> &str {
-    println!("current: {}", s);
+pub fn debug<T: std::fmt::Debug>(s: T) -> T {
+    println!("current: {:#?}", s);
     s
 }
