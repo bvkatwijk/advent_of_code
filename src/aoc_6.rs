@@ -17,7 +17,9 @@ fn aoc_6_1(path: &str) -> u64 {
 }
 
 fn ways_to_win(race: &Race) -> u64 {
-    2
+    (0..race.time).into_iter()
+        .filter(|i| i * (race.time - i) > race.record)
+        .count() as u64
 }
 
 fn races(path: &str) -> Vec<Race> {
@@ -58,6 +60,7 @@ mod tests {
     #[test]
     fn aoc_6_1_test() {
         assert_eq!(288, aoc_6_1(EXAMPLE_01));
+        assert_eq!(288, aoc_6_1(ACTUAL));
     }
 
     #[test]
@@ -66,5 +69,10 @@ mod tests {
             vec![7, 15, 30],
             line_to_numers("Time:      7  15   30".to_string())
         );
+    }
+
+    #[test]
+    fn ways_to_win_test() {
+        assert_eq!(4, ways_to_win(&Race { time: 7, record: 9 }));
     }
 }
