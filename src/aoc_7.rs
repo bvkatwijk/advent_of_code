@@ -13,8 +13,8 @@ fn aoc_7_1(path: &str) -> u64 {
         .map(|l| {
             let split: Vec<&str> = l.split_whitespace().collect();
             HandBid {
-                hand: split[0],
-                bid: split[1].parse::<u8>().unwrap(),
+                hand: split[0].to_string(),
+                bid: split[1].parse::<u16>().unwrap(),
             }
         })
         .collect();
