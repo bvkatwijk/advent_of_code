@@ -5,7 +5,8 @@ mod helper;
 // mod aoc_3;
 // mod aoc_4;
 // mod aoc_5;
-mod aoc_6;
+// mod aoc_6;
+mod aoc_7;
 
 fn main() {
     

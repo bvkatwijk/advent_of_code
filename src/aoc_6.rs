@@ -16,6 +16,25 @@ fn aoc_6_1(path: &str) -> u64 {
         .unwrap()
 }
 
+fn aoc_6_2(path: &str) -> u64 {
+    let result: Vec<u64> = helper::file_lines(path)
+        .map(|l| l.unwrap())
+        .map(|s| line_to_numbers(s))
+        .map(|v| concat_numbers(v))
+        .collect();
+    ways_to_win(&Race{
+        time: result[0],
+        record: result[1]
+    })
+}
+
+fn concat_numbers(v: Vec<u64>) -> u64 {
+    v.iter()
+        .fold("".to_string(), |acc, x| acc + &x.to_string())
+        .parse::<u64>()
+        .unwrap()
+}
+
 fn ways_to_win(race: &Race) -> u64 {
     (0..race.time).into_iter()
         .filter(|i| i * (race.time - i) > race.record)
@@ -23,9 +42,9 @@ fn ways_to_win(race: &Race) -> u64 {
 }
 
 fn races(path: &str) -> Vec<Race> {
-    let number_lines: Vec<Vec<u16>> = helper::file_lines(path)
+    let number_lines: Vec<Vec<u64>> = helper::file_lines(path)
         .map(|l| l.unwrap())
-        .map(|s| line_to_numers(s))
+        .map(|s| line_to_numbers(s))
         .collect();
     let race_count = number_lines[0].len();
     (0..race_count)
@@ -37,20 +56,20 @@ fn races(path: &str) -> Vec<Race> {
         .collect()
 }
 
-fn line_to_numers(s: String) -> Vec<u16> {
+fn line_to_numbers(s: String) -> Vec<u64> {
     s.split(":")
         .skip(1)
         .map(|s| s.trim())
         .flat_map(|s| s.split_whitespace())
         .map(|s| s.trim())
-        .map(|s| s.parse::<u16>().unwrap())
+        .map(|s| s.parse::<u64>().unwrap())
         .collect()
 }
 
 #[derive(Debug, PartialEq, Eq, Hash)]
 struct Race {
-    time: u16,
-    record: u16,
+    time: u64,
+    record: u64,
 }
 
 #[cfg(test)]
@@ -60,14 +79,20 @@ mod tests {
     #[test]
     fn aoc_6_1_test() {
         assert_eq!(288, aoc_6_1(EXAMPLE_01));
-        assert_eq!(288, aoc_6_1(ACTUAL));
+        assert_eq!(160816, aoc_6_1(ACTUAL));
     }
 
     #[test]
-    fn line_to_numers_test() {
+    fn aoc_6_2_test() {
+        assert_eq!(71503, aoc_6_2(EXAMPLE_01));
+        assert_eq!(46561107, aoc_6_2(ACTUAL));
+    }
+
+    #[test]
+    fn line_to_numbers_test() {
         assert_eq!(
             vec![7, 15, 30],
-            line_to_numers("Time:      7  15   30".to_string())
+            line_to_numbers("Time:      7  15   30".to_string())
         );
     }
 
