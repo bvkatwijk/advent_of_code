@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::helper;
 
 
@@ -13,18 +15,23 @@ fn aoc_7_1(path: &str) -> u64 {
         .map(|l| {
             let split: Vec<&str> = l.split_whitespace().collect();
             HandBid {
-                hand: split[0].to_string(),
+                hand: split[0]
+                    .to_lowercase()
+                    .chars()
+                    .fold(HashMap::new(), |mut map, c| {
+                        *map.entry(c).or_insert(0) += 1;
+                        map
+                    }),
                 bid: split[1].parse::<u16>().unwrap(),
             }
         })
         .collect();
-    // hands.so
-        // .count()
+    // hands.sort_by(|a, b| )
     0
 }
 
 struct HandBid {
-    hand: String,
+    hand: HashMap<char, u8>,
     bid: u16
 }
 
