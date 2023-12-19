@@ -1,4 +1,4 @@
-use std::{collections::HashMap, cmp::Ordering, ops::Index};
+use std::{collections::HashMap, cmp::Ordering, ops::Index, borrow::BorrowMut};
 
 use crate::helper;
 
@@ -51,7 +51,14 @@ impl HandBid {
 
     // Compare hand type (e.g. four of a kind > full house)
     fn hand_type_order(&self, other: &HandBid) -> Ordering {
-        self.hand.values().max().cmp(&other.hand.values().max())
+        let self_vals: Vec<&u8> = self.hand.values().collect();
+        let other_vals: Vec<&u8> = other.hand.values().collect();
+        let max = self_vals.iter().max().unwrap();
+        let ord = max.cmp(other_vals.iter().max().unwrap());
+        match ord.is_eq() && max.eq(&&3) {
+            false => ord,
+            true => self_vals.contains(&&2).cmp(&other_vals.contains(&&2))
+        }
     }
 
     // Compare hand card (e.g. A > K)
