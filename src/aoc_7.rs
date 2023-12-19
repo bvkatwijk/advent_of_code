@@ -23,7 +23,8 @@ fn aoc_7_1(path: &str) -> usize {
 }
 
 fn as_hand(s: &str) -> HandBid {
-    let split: Vec<&str> = s.split_whitespace().collect();
+    let split: Vec<&str> = s.split_whitespace()
+        .collect();
     HandBid {
         hand: split[0]
             .to_lowercase()
@@ -32,7 +33,7 @@ fn as_hand(s: &str) -> HandBid {
                 *map.entry(c).or_insert(0) += 1;
                 map
             }),
-        orig: s.to_string(),
+        orig: split[0].to_string(),
         bid: split[1].parse::<u16>().unwrap(),
     }
 }
@@ -60,10 +61,13 @@ impl HandBid {
 }
 
 fn hand_card_compare(one: &str, other: &str) -> Ordering {
+    let ord = card_compare(&one[0..1], &other[0..1]);
     match one.len()  {
-        1 => card_compare(one, other),
-        _ => card_compare(&one[0..1], &other[0..1])
-            .then(hand_card_compare(&one[1..], &other[1..]))
+        1 => ord,
+        _ => match ord {
+            Ordering::Equal => hand_card_compare(&one[1..], &other[1..]),
+            _ => ord
+        }
     }
 }
 
@@ -83,18 +87,35 @@ mod tests {
 
     #[test]
     fn aoc_7_1_test() {
-        // assert_eq!(6440, aoc_7_1(EXAMPLE));
+        assert_eq!(6440, aoc_7_1(EXAMPLE));
     }
 
     #[test]
     fn hand_type_order_test() {
-        let one = as_hand("AAAAA 0");
-        let two = as_hand("AAAAK 0");
-        let three = as_hand("KKKKA 0");
-        assert_eq!(Ordering::Greater, one.hand_type_order(&two));
-        assert_eq!(Ordering::Less, two.hand_type_order(&one));
-        assert_eq!(Ordering::Equal, one.hand_type_order(&one));
-        assert_eq!(Ordering::Equal, two.hand_type_order(&three));
+        let h_aaaaa = as_hand("AAAAA 0");
+        let h_22222 = as_hand("22222 0");
+        let h_aaaak = as_hand("AAAAK 0");
+        let h_kkkka = as_hand("KKKKA 0");
+        let h_aaakq = as_hand("AAAKQ 0");
+        let h_aaaqq = as_hand("AAAQQ 0");
+        assert_eq!(Ordering::Greater, h_aaaaa.hand_type_order(&h_aaaak));
+        assert_eq!(Ordering::Less, h_aaaak.hand_type_order(&h_aaaaa));
+        assert_eq!(Ordering::Less, h_aaaak.hand_type_order(&h_22222));
+        assert_eq!(Ordering::Equal, h_aaaaa.hand_type_order(&h_aaaaa));
+        assert_eq!(Ordering::Equal, h_aaaak.hand_type_order(&h_kkkka));
+        assert_eq!(Ordering::Greater, h_aaaqq.hand_type_order(&h_aaakq));
+    }
+
+    #[test]
+    fn hand_compare_test() {
+        let h_aaaaa = as_hand("AAAAA 0");
+        let h_22222 = as_hand("22222 0");
+        let h_aaaak = as_hand("AAAAK 0");
+        let h_kkkka = as_hand("KKKKA 0");
+        let h_aaakq = as_hand("AAAKQ 0");
+        let h_aaaqq = as_hand("AAAQQ 0");
+        assert_eq!(Ordering::Greater, h_aaaaa.compare(&h_22222));
+        assert_eq!(Ordering::Greater, h_22222.compare(&h_aaaak));
     }
 
     #[test]
@@ -105,7 +126,7 @@ mod tests {
         assert_eq!(Ordering::Greater, one.hand_card_order(&two));
         assert_eq!(Ordering::Less, two.hand_card_order(&one));
         assert_eq!(Ordering::Equal, one.hand_card_order(&one));
-        assert_eq!(Ordering::Equal, two.hand_card_order(&three));
+        assert_eq!(Ordering::Greater, two.hand_card_order(&three));
     }
 
     #[test]
