@@ -1,4 +1,4 @@
-use std::{collections::HashMap, cmp::Ordering};
+use std::{collections::HashMap, cmp::Ordering, ops::Index};
 
 use crate::helper;
 
@@ -51,6 +51,15 @@ impl HandBid {
     }
 }
 
+fn card_compare(one: &str, other: &str) -> Ordering {
+    score(one).cmp(&score(&other))   
+}
+
+fn score(str: &str) -> usize {
+    "23456789TJQKA"
+        .find(str)
+        .unwrap()
+}
 
 #[cfg(test)]
 mod tests {
@@ -64,9 +73,22 @@ mod tests {
     #[test]
     fn hand_type_order_test() {
         let one = as_hand("AAAAA 0");
-        let other = as_hand("AAAAK 0");
-        assert_eq!(Ordering::Greater, one.hand_type_order(&other));
-        assert_eq!(Ordering::Less, other.hand_type_order(&one));
+        let two = as_hand("AAAAK 0");
+        let three = as_hand("KKKKA 0");
+        assert_eq!(Ordering::Greater, one.hand_type_order(&two));
+        assert_eq!(Ordering::Less, two.hand_type_order(&one));
         assert_eq!(Ordering::Equal, one.hand_type_order(&one));
+        assert_eq!(Ordering::Equal, two.hand_type_order(&three));
+    }
+
+    #[test]
+    fn card_compare_test() {
+        assert_eq!(Ordering::Equal, card_compare("A", "A"));
+        assert_eq!(Ordering::Greater, card_compare("A", "K"));
+        assert_eq!(Ordering::Greater, card_compare("K", "Q"));
+        assert_eq!(Ordering::Greater, card_compare("Q", "J"));
+        assert_eq!(Ordering::Greater, card_compare("J", "T"));
+        assert_eq!(Ordering::Greater, card_compare("T", "9"));
+        assert_eq!(Ordering::Greater, card_compare("9", "8"));
     }
 }
