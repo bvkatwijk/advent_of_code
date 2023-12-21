@@ -20,19 +20,12 @@ fn aoc_6_2(path: &str) -> u64 {
     let result: Vec<u64> = helper::file_lines(path)
         .map(|l| l.unwrap())
         .map(|s| line_to_numbers(s))
-        .map(|v| concat_numbers(v))
+        .map(|v| helper::concat_numbers(v))
         .collect();
     ways_to_win(&Race{
         time: result[0],
         record: result[1]
     })
-}
-
-fn concat_numbers(v: Vec<u64>) -> u64 {
-    v.iter()
-        .fold("".to_string(), |acc, x| acc + &x.to_string())
-        .parse::<u64>()
-        .unwrap()
 }
 
 fn ways_to_win(race: &Race) -> u64 {
