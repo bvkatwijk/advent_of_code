@@ -6,6 +6,8 @@ use crate::helper::{self};
 #[allow(dead_code)]
 const EXAMPLE: &str = "./src/aoc_7/example.txt";
 #[allow(dead_code)]
+const EXAMPLE_2: &str = "./src/aoc_7/02_example.txt";
+#[allow(dead_code)]
 const ACTUAL: &str = "./src/aoc_7/01.txt";
 
 #[allow(dead_code)]
