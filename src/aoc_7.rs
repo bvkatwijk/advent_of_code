@@ -1,7 +1,6 @@
-use std::{collections::HashMap, cmp::Ordering, ops::Index, borrow::BorrowMut};
+use std::{cmp::Ordering, collections::HashMap};
 
-use crate::helper;
-
+use crate::helper::{self, debug};
 
 #[allow(dead_code)]
 const EXAMPLE: &str = "./src/aoc_7/example.txt";
@@ -15,16 +14,16 @@ fn aoc_7_1(path: &str) -> usize {
         .map(|l| as_hand(&l))
         .collect();
     hands.sort_by(|a, b| a.compare(b));
-    hands.reverse();
-    hands.iter()
+    hands
+        .iter()
         .enumerate()
-        .map(|(i, h)| i * h.bid as usize)
+        .map(|(i, h)| (i, debug(h)))
+        .map(|(i, h)| (i + 1) * h.bid as usize)
         .sum()
 }
 
 fn as_hand(s: &str) -> HandBid {
-    let split: Vec<&str> = s.split_whitespace()
-        .collect();
+    let split: Vec<&str> = s.split_whitespace().collect();
     HandBid {
         hand: split[0]
             .to_lowercase()
@@ -38,27 +37,24 @@ fn as_hand(s: &str) -> HandBid {
     }
 }
 
+#[derive(Debug)]
 struct HandBid {
     hand: HashMap<char, u8>,
     orig: String,
-    bid: u16
+    bid: u16,
 }
 
 impl HandBid {
     fn compare(&self, other: &HandBid) -> Ordering {
-        self.hand_type_order(other).then(self.hand_card_order(other))
+        self.hand_type_order(other)
+            .then(self.hand_card_order(other))
     }
 
     // Compare hand type (e.g. four of a kind > full house)
     fn hand_type_order(&self, other: &HandBid) -> Ordering {
-        let self_vals: Vec<&u8> = self.hand.values().collect();
-        let other_vals: Vec<&u8> = other.hand.values().collect();
-        let max = self_vals.iter().max().unwrap();
-        let ord = max.cmp(other_vals.iter().max().unwrap());
-        match ord.is_eq() && max.eq(&&3) {
-            false => ord,
-            true => self_vals.contains(&&2).cmp(&other_vals.contains(&&2))
-        }
+        let self_vals: u64 = helper::concat_numbers(self.hand.values().map(|i| *i as u64).collect());
+        let other_vals: u64 = helper::concat_numbers(other.hand.values().map(|i| *i as u64).collect());
+        self_vals.cmp(&other_vals)
     }
 
     // Compare hand card (e.g. A > K)
@@ -69,23 +65,21 @@ impl HandBid {
 
 fn hand_card_compare(one: &str, other: &str) -> Ordering {
     let ord = card_compare(&one[0..1], &other[0..1]);
-    match one.len()  {
+    match one.len() {
         1 => ord,
         _ => match ord {
             Ordering::Equal => hand_card_compare(&one[1..], &other[1..]),
-            _ => ord
-        }
+            _ => ord,
+        },
     }
 }
 
 fn card_compare(one: &str, other: &str) -> Ordering {
-    score(one).cmp(&score(&other))   
+    score(one).cmp(&score(&other))
 }
 
 fn score(str: &str) -> usize {
-    "23456789TJQKA"
-        .find(str)
-        .unwrap()
+    "23456789TJQKA".find(str).unwrap()
 }
 
 #[cfg(test)]
@@ -95,6 +89,14 @@ mod tests {
     #[test]
     fn aoc_7_1_test() {
         assert_eq!(6440, aoc_7_1(EXAMPLE));
+        // assert_eq!(6440, aoc_7_1(ACTUAL));
+    }
+
+    #[test]
+    fn as_hand_test() {
+        let hand = as_hand("T55J5 684");
+        assert_eq!("T55J5", hand.orig);
+        assert_eq!(684, hand.bid);
     }
 
     #[test]
@@ -121,8 +123,20 @@ mod tests {
         let h_kkkka = as_hand("KKKKA 0");
         let h_aaakq = as_hand("AAAKQ 0");
         let h_aaaqq = as_hand("AAAQQ 0");
+        let h_ttt98 = as_hand("TTT98 0");
+        let h_23432 = as_hand("23432 0");
+        let h_a23a4 = as_hand("A23A4 0");
         assert_eq!(Ordering::Greater, h_aaaaa.compare(&h_22222));
         assert_eq!(Ordering::Greater, h_22222.compare(&h_aaaak));
+        assert_eq!(Ordering::Equal, h_22222.compare(&h_22222));
+        assert_eq!(Ordering::Less, h_aaaak.compare(&h_22222));
+        assert_eq!(Ordering::Less, h_aaakq.compare(&h_22222));
+        assert_eq!(Ordering::Less, h_aaakq.compare(&h_kkkka));
+        assert_eq!(Ordering::Less, h_aaaqq.compare(&h_kkkka));
+        assert_eq!(Ordering::Greater, h_aaaqq.compare(&h_aaakq));
+        assert_eq!(Ordering::Greater, h_aaaqq.compare(&h_ttt98));
+        assert_eq!(Ordering::Greater, h_ttt98.compare(&h_23432));
+        assert_eq!(Ordering::Greater, h_23432.compare(&h_a23a4));
     }
 
     #[test]
