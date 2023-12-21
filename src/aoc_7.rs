@@ -1,6 +1,7 @@
+use core::panic;
 use std::{cmp::Ordering, collections::HashMap};
 
-use crate::helper::{self, debug};
+use crate::helper::{self};
 
 #[allow(dead_code)]
 const EXAMPLE: &str = "./src/aoc_7/example.txt";
@@ -17,7 +18,6 @@ fn aoc_7_1(path: &str) -> usize {
     hands
         .iter()
         .enumerate()
-        .map(|(i, h)| (i, debug(h)))
         .map(|(i, h)| (i + 1) * h.bid as usize)
         .sum()
 }
@@ -37,11 +37,21 @@ fn as_hand(s: &str) -> HandBid {
     }
 }
 
-#[derive(Debug)]
 struct HandBid {
     hand: HashMap<char, u8>,
     orig: String,
     bid: u16,
+}
+
+#[derive(PartialOrd, Ord, PartialEq, Eq)]
+enum HandType {
+    One,
+    Two,
+    TwoPair,
+    Three,
+    FullHouse,
+    Four,
+    Five,
 }
 
 impl HandBid {
@@ -52,14 +62,32 @@ impl HandBid {
 
     // Compare hand type (e.g. four of a kind > full house)
     fn hand_type_order(&self, other: &HandBid) -> Ordering {
-        let self_vals: u64 = helper::concat_numbers(self.hand.values().map(|i| *i as u64).collect());
-        let other_vals: u64 = helper::concat_numbers(other.hand.values().map(|i| *i as u64).collect());
-        self_vals.cmp(&other_vals)
+        self.hand_type().cmp(&other.hand_type())
+    }
+
+    fn hand_type_score(&self) -> u64 {
+        let mut self_vals: Vec<&u8> = self.hand.values().collect();
+        self_vals.sort();
+        self_vals.reverse();
+        helper::concat_numbers(self_vals.into_iter().map(|i| *i as u64).collect())
     }
 
     // Compare hand card (e.g. A > K)
     fn hand_card_order(&self, other: &HandBid) -> Ordering {
         hand_card_compare(&self.orig, &other.orig)
+    }
+
+    fn hand_type(&self) -> HandType {
+        match &self.hand_type_score() {
+            5 => HandType::Five,
+            41 => HandType::Four,
+            32 => HandType::FullHouse,
+            311 => HandType::Three,
+            221 => HandType::TwoPair,
+            2111 => HandType::Two,
+            11111 => HandType::One,
+            _ => panic!("Unknown score {}", &self.hand_type_score())
+        }
     }
 }
 
@@ -89,7 +117,7 @@ mod tests {
     #[test]
     fn aoc_7_1_test() {
         assert_eq!(6440, aoc_7_1(EXAMPLE));
-        // assert_eq!(6440, aoc_7_1(ACTUAL));
+        assert_eq!(249748283, aoc_7_1(ACTUAL));
     }
 
     #[test]
