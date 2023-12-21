@@ -14,3 +14,10 @@ pub fn debug<T: std::fmt::Debug>(s: T) -> T {
     println!("current: {:#?}", s);
     s
 }
+
+pub fn concat_numbers(v: Vec<u64>) -> u64 {
+    v.iter()
+        .fold("".to_string(), |acc, x| acc + &x.to_string())
+        .parse::<u64>()
+        .unwrap()
+}
