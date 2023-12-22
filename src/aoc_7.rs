@@ -6,8 +6,6 @@ use crate::helper::{self};
 #[allow(dead_code)]
 const EXAMPLE: &str = "./src/aoc_7/example.txt";
 #[allow(dead_code)]
-const EXAMPLE_2: &str = "./src/aoc_7/02_example.txt";
-#[allow(dead_code)]
 const ACTUAL: &str = "./src/aoc_7/01.txt";
 
 #[allow(dead_code)]
@@ -17,6 +15,20 @@ fn aoc_7_1(path: &str) -> usize {
         .map(|l| as_hand(&l))
         .collect();
     hands.sort_by(|a, b| a.compare(b));
+    hands
+        .iter()
+        .enumerate()
+        .map(|(i, h)| (i + 1) * h.bid as usize)
+        .sum()
+}
+
+#[allow(dead_code)]
+fn aoc_7_2(path: &str) -> usize {
+    let mut hands: Vec<HandBid> = helper::file_lines(path)
+        .map(|l| l.unwrap())
+        .map(|l| as_hand(&l))
+        .collect();
+    hands.sort_by(|a, b| a.compare_7_2(b));
     hands
         .iter()
         .enumerate()
@@ -45,7 +57,7 @@ struct HandBid {
     bid: u16,
 }
 
-#[derive(PartialOrd, Ord, PartialEq, Eq)]
+#[derive(PartialOrd, Ord, PartialEq, Eq, Debug)]
 enum HandType {
     One,
     Two,
@@ -62,9 +74,19 @@ impl HandBid {
             .then(self.hand_card_order(other))
     }
 
+    fn compare_7_2(&self, other: &HandBid) -> Ordering {
+        self.hand_type_order_7_2(other)
+            .then(self.hand_card_order_7_2(other))
+    }
+
     // Compare hand type (e.g. four of a kind > full house)
     fn hand_type_order(&self, other: &HandBid) -> Ordering {
         self.hand_type().cmp(&other.hand_type())
+    }
+
+    // Compare hand type (e.g. four of a kind > full house) with Joker rule
+    fn hand_type_order_7_2(&self, other: &HandBid) -> Ordering {
+        self.hand_type_7_2().cmp(&other.hand_type_7_2())
     }
 
     fn hand_type_score(&self) -> u64 {
@@ -74,9 +96,27 @@ impl HandBid {
         helper::concat_numbers(self_vals.into_iter().map(|i| *i as u64).collect())
     }
 
+    fn hand_type_score_7_2(&self) -> u64 {
+        let mut self_vals: Vec<&u8> = self.hand.values().collect();
+        self_vals.sort();
+        self_vals.reverse();
+        match helper::debug(self.hand.get(&'J')) {
+            Some(i) => {
+                println!("Jokers: {}", i);
+            }
+            _ => ()
+        };
+        helper::concat_numbers(self_vals.into_iter().map(|i| *i as u64).collect())
+    }
+
     // Compare hand card (e.g. A > K)
     fn hand_card_order(&self, other: &HandBid) -> Ordering {
         hand_card_compare(&self.orig, &other.orig)
+    }
+
+    // Compare hand card (e.g. A > K) with Joker rule
+    fn hand_card_order_7_2(&self, other: &HandBid) -> Ordering {
+        hand_card_compare_7_2(&self.orig, &other.orig)
     }
 
     fn hand_type(&self) -> HandType {
@@ -89,6 +129,19 @@ impl HandBid {
             2111 => HandType::Two,
             11111 => HandType::One,
             _ => panic!("Unknown score {}", &self.hand_type_score())
+        }
+    }
+
+    fn hand_type_7_2(&self) -> HandType {
+        match &self.hand_type_score_7_2() {
+            5 => HandType::Five,
+            41 => HandType::Four,
+            32 => HandType::FullHouse,
+            311 => HandType::Three,
+            221 => HandType::TwoPair,
+            2111 => HandType::Two,
+            11111 => HandType::One,
+            _ => panic!("Unknown score {}", &self.hand_type_score_7_2())
         }
     }
 }
@@ -104,12 +157,31 @@ fn hand_card_compare(one: &str, other: &str) -> Ordering {
     }
 }
 
+fn hand_card_compare_7_2(one: &str, other: &str) -> Ordering {
+    let ord = card_compare_7_2(&one[0..1], &other[0..1]);
+    match one.len() {
+        1 => ord,
+        _ => match ord {
+            Ordering::Equal => hand_card_compare_7_2(&one[1..], &other[1..]),
+            _ => ord,
+        },
+    }
+}
+
 fn card_compare(one: &str, other: &str) -> Ordering {
     score(one).cmp(&score(&other))
 }
 
+fn card_compare_7_2(one: &str, other: &str) -> Ordering {
+    score_7_2(one).cmp(&score_7_2(&other))
+}
+
 fn score(str: &str) -> usize {
     "23456789TJQKA".find(str).unwrap()
+}
+
+fn score_7_2(str: &str) -> usize {
+    "J23456789TQKA".find(str).unwrap()
 }
 
 #[cfg(test)]
@@ -120,6 +192,12 @@ mod tests {
     fn aoc_7_1_test() {
         assert_eq!(6440, aoc_7_1(EXAMPLE));
         assert_eq!(249748283, aoc_7_1(ACTUAL));
+    }
+
+    #[test]
+    fn aoc_7_2_test() {
+        assert_eq!(5905, aoc_7_2(EXAMPLE));
+        // assert_eq!(249748283, aoc_7_1(ACTUAL));
     }
 
     #[test]
@@ -170,14 +248,28 @@ mod tests {
     }
 
     #[test]
+    fn hand_compare_7_2_test() {
+        let h_aaaaa = as_hand("AAAAA 0");
+        let h_22222 = as_hand("22222 0");
+        assert_eq!(Ordering::Greater, h_aaaaa.compare_7_2(&h_22222));
+    }
+
+    #[test]
     fn hand_card_order_test() {
         let one = as_hand("AAAAA 0");
         let two = as_hand("AAAAK 0");
-        let three = as_hand("KKKKA 0");
+        let three = as_hand("KKKKK 0");
         assert_eq!(Ordering::Greater, one.hand_card_order(&two));
         assert_eq!(Ordering::Less, two.hand_card_order(&one));
         assert_eq!(Ordering::Equal, one.hand_card_order(&one));
         assert_eq!(Ordering::Greater, two.hand_card_order(&three));
+    }
+
+    #[test]
+    fn hand_card_order_7_2_test() {
+        let one = as_hand("JKKK2 0");
+        let other = as_hand("QQQQ2 0");
+        assert_eq!(Ordering::Less, one.hand_card_order_7_2(&other));
     }
 
     #[test]
@@ -189,5 +281,19 @@ mod tests {
         assert_eq!(Ordering::Greater, card_compare("J", "T"));
         assert_eq!(Ordering::Greater, card_compare("T", "9"));
         assert_eq!(Ordering::Greater, card_compare("9", "8"));
+    }
+
+    #[test]
+    fn card_compare_7_2_test() {
+        assert_eq!(Ordering::Equal, card_compare_7_2("A", "A"));
+        assert_eq!(Ordering::Greater, card_compare_7_2("Q", "J"));
+        assert_eq!(Ordering::Less, card_compare_7_2("J", "T"));
+        assert_eq!(Ordering::Less, card_compare_7_2("J", "2"));
+    }
+
+    #[test]
+    fn hand_type_7_2_test() {
+        assert_eq!(HandType::Five, as_hand("AAAAA 0").hand_type_7_2());
+        assert_eq!(HandType::Five, as_hand("AAAAJ 0").hand_type_7_2());
     }
 }
