@@ -12,7 +12,14 @@ fn aoc_8_1(path: &str) -> usize {
         .collect();
     let instructions: &str = &lines[0];
     let network = network(&lines[2..]);
-    0
+
+    let mut steps: usize = 0;
+    loop {
+        steps += 1;
+        break;
+    }
+
+    steps
 }
 
 fn network(lines: &[String]) -> Vec<Node> {
@@ -38,6 +45,23 @@ fn as_node(s: &str) -> Node {
     }
 }
 
+
+#[derive(Debug, PartialEq, Eq, Hash)]
+enum Direction {
+    Left,
+    Right
+}
+
+impl Direction {
+    fn from(str: &str) -> Option<Direction> {
+        match str {
+            "L" => Some(Direction::Left),
+            "R" => Some(Direction::Right),
+            _ => None
+        }
+    }
+}
+
 #[derive(Debug, Hash, PartialEq)]
 struct Node {
     name: String,
@@ -46,6 +70,12 @@ struct Node {
 }
 
 impl Node {
+    fn pick(&self, dir: Direction) -> &str {
+        match dir {
+            Direction::Left => &self.left,
+            Direction::Right => &self.right
+        }
+    }
 }
 
 #[cfg(test)]
@@ -64,5 +94,23 @@ mod tests {
             left: "BBB".to_owned(),
             right: "CCC".to_owned(),
         }, as_node("AAA = (BBB, CCC)"))
+    }
+
+    #[test]
+    fn direction_from_test() {
+        assert_eq!(Some(Direction::Left), Direction::from("L"));
+        assert_eq!(Some(Direction::Right), Direction::from("R"));
+        assert_eq!(None, Direction::from("Z"));
+    }
+
+    #[test]
+    fn node_pick_test() {
+        let node = Node {
+            name: "AAA".to_owned(),
+            left: "BBB".to_owned(),
+            right: "CCC".to_owned(),
+        };
+        assert_eq!("BBB", node.pick(Direction::Left));
+        assert_eq!("CCC", node.pick(Direction::Right));
     }
 }
