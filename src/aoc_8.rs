@@ -1,24 +1,33 @@
-use crate::helper::{self};
+use crate::helper::{self, debug};
 
 #[allow(dead_code)]
 const EXAMPLE_01: &str = "./src/aoc_8/example_01.txt";
 #[allow(dead_code)]
 const EXAMPLE_02: &str = "./src/aoc_8/example_02.txt";
+#[allow(dead_code)]
+const INPUT: &str = "./src/aoc_8/input.txt";
 
 #[allow(dead_code)]
 fn aoc_8_1(path: &str) -> usize {
     let lines: Vec<String> = helper::file_lines(path)
         .map(|l| l.unwrap())
         .collect();
-    let instructions = instructions(&lines[0]);
-    let network = network(&lines[2..]);
+    let instructions: Vec<Direction> = instructions(&lines[0]);
+    let network: Vec<Node> = network(&lines[2..]);
+    walk_network(network, instructions)
+}
 
+fn walk_network(network: Vec<Node>, instructions: Vec<Direction>) -> usize {
     let mut steps: usize = 0;
-    loop {
+    let mut node = &network[0];
+    while !node.name.eq("ZZZ") {
+        let dir = &instructions[steps % instructions.len()];
+        let result = node.pick(dir);
+        node = network.iter()
+            .find(|n| n.name.eq(result))
+            .unwrap();
         steps += 1;
-        break;
     }
-
     steps
 }
 
@@ -77,7 +86,7 @@ struct Node {
 }
 
 impl Node {
-    fn pick(&self, dir: Direction) -> &str {
+    fn pick(&self, dir: &Direction) -> &str {
         match dir {
             Direction::Left => &self.left,
             Direction::Right => &self.right
@@ -89,10 +98,12 @@ impl Node {
 mod tests {
     use super::*;
 
-    // #[test]
-    // fn aoc_8_1_test() {
-    //     assert_eq!(2, aoc_8_1(EXAMPLE_01));
-    // }
+    #[test]
+    fn aoc_8_1_test() {
+        assert_eq!(2, aoc_8_1(EXAMPLE_01));
+        assert_eq!(6, aoc_8_1(EXAMPLE_02));
+        assert_eq!(6, aoc_8_1(INPUT));
+    }
 
     #[test]
     fn node_test() {
@@ -117,8 +128,8 @@ mod tests {
             left: "BBB".to_owned(),
             right: "CCC".to_owned(),
         };
-        assert_eq!("BBB", node.pick(Direction::Left));
-        assert_eq!("CCC", node.pick(Direction::Right));
+        assert_eq!("BBB", node.pick(&Direction::Left));
+        assert_eq!("CCC", node.pick(&Direction::Right));
     }
 
     #[test]
