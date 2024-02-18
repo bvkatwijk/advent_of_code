@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::helper::{self, debug};
 
 #[allow(dead_code)]
@@ -13,19 +15,17 @@ fn aoc_8_1(path: &str) -> usize {
         .map(|l| l.unwrap())
         .collect();
     let instructions: Vec<Direction> = instructions(&lines[0]);
-    let network: Vec<Node> = network(&lines[2..]);
+    let network = network(&lines[2..]);
     walk_network(network, instructions)
 }
 
-fn walk_network(network: Vec<Node>, instructions: Vec<Direction>) -> usize {
+fn walk_network(network: HashMap<String, Node>, instructions: Vec<Direction>) -> usize {
     let mut steps: usize = 0;
-    let mut node = &network[0];
+    let mut node = network.get("AAA").unwrap();
     while !node.name.eq("ZZZ") {
         let dir = &instructions[steps % instructions.len()];
         let result = node.pick(dir);
-        node = network.iter()
-            .find(|n| n.name.eq(result))
-            .unwrap();
+        node = network.get(&result.to_string()).unwrap();
         steps += 1;
     }
     steps
@@ -38,10 +38,16 @@ fn instructions(lines: &str) -> Vec<Direction> {
         .collect()
 }
 
-fn network(lines: &[String]) -> Vec<Node> {
+fn network(lines: &[String]) -> HashMap<String, Node> {
+    let mut draw = HashMap::new(); 
+        
     lines.iter()
         .map(|s| as_node(s))
-        .collect()
+        .for_each(|e| {
+            draw.insert(e.name.to_string(), e);
+        });
+
+    draw
 }
 
 fn as_node(s: &str) -> Node {
@@ -102,7 +108,7 @@ mod tests {
     fn aoc_8_1_test() {
         assert_eq!(2, aoc_8_1(EXAMPLE_01));
         assert_eq!(6, aoc_8_1(EXAMPLE_02));
-        assert_eq!(6, aoc_8_1(INPUT));
+        assert_eq!(23147, aoc_8_1(INPUT));
     }
 
     #[test]
