@@ -6,17 +6,17 @@ const EXAMPLE_01: &str = "./src/aoc_9/example_01.txt";
 const INPUT: &str = "./src/aoc_9/input.txt";
 
 #[allow(dead_code)]
-fn aoc_9_1(path: &str) -> usize {
+fn aoc_9_1(path: &str) -> i64 {
     helper::file_lines(path)
         .map(|l| l.unwrap())
         .map(|l| l.split_whitespace()
-            .map(|s| s.parse::<usize>().unwrap())
+            .map(|s| s.parse::<i64>().unwrap())
             .collect())
         .map(|l| history(l))
         .sum()
 }
 
-fn history(line: Vec<usize>) -> usize {
+fn history(line: Vec<i64>) -> i64 {
     let mut lines = vec![line.clone()];
     let mut new_line = line;
     while !new_line.iter().all(|u| u.eq(&0)) {
@@ -28,8 +28,7 @@ fn history(line: Vec<usize>) -> usize {
         .sum()
 }
 
-fn diffs(new_line: &Vec<usize>) -> Vec<usize> {
-    debug(&new_line);
+fn diffs(new_line: &Vec<i64>) -> Vec<i64> {
     new_line.windows(2).map(|w| w[1] - w[0]).collect()
 }
 
@@ -41,5 +40,6 @@ mod tests {
     #[test]
     fn aoc_9_1_test() {
         assert_eq!(114, aoc_9_1(EXAMPLE_01));
+        assert_eq!(1725987467, aoc_9_1(INPUT));
     }
 }
