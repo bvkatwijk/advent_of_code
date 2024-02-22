@@ -176,7 +176,7 @@ mod tests {
     #[test]
     fn aoc_8_2_test() {
         assert_eq!(6, aoc_8_2(EXAMPLE_03));
-        assert_eq!(23147, aoc_8_2(INPUT));
+        assert_eq!(22289513667691, aoc_8_2(INPUT));
     }
 
     #[test]
