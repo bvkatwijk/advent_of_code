@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap};
 
 use crate::helper::{self, debug};
 
@@ -6,6 +6,8 @@ use crate::helper::{self, debug};
 const EXAMPLE_01: &str = "./src/aoc_8/example_01.txt";
 #[allow(dead_code)]
 const EXAMPLE_02: &str = "./src/aoc_8/example_02.txt";
+#[allow(dead_code)]
+const EXAMPLE_03: &str = "./src/aoc_8/example_03.txt";
 #[allow(dead_code)]
 const INPUT: &str = "./src/aoc_8/input.txt";
 
@@ -16,19 +18,79 @@ fn aoc_8_1(path: &str) -> usize {
         .collect();
     let instructions: Vec<Direction> = instructions(&lines[0]);
     let network = network(&lines[2..]);
-    walk_network(network, instructions)
+    walk_network_01(&network, &instructions)
 }
 
-fn walk_network(network: HashMap<String, Node>, instructions: Vec<Direction>) -> usize {
+#[allow(dead_code)]
+fn aoc_8_2(path: &str) -> usize {
+    let lines: Vec<String> = helper::file_lines(path)
+        .map(|l| l.unwrap())
+        .collect();
+    let instructions: Vec<Direction> = instructions(&lines[0]);
+    let network = network(&lines[2..]);
+    walk_network_02(&network, &instructions)
+}
+
+fn walk_network_01(network: &HashMap<String, Node>, instructions: &Vec<Direction>) -> usize {
+    walk_network_for_node(network, instructions, &"AAA")
+}
+
+fn walk_network_for_node(network: &HashMap<String, Node>, instructions: &Vec<Direction>, start: &str) -> usize {
+    let mut node = network.get(start).unwrap();
     let mut steps: usize = 0;
-    let mut node = network.get("AAA").unwrap();
     while !node.name.eq("ZZZ") {
         let dir = &instructions[steps % instructions.len()];
-        let result = node.pick(dir);
-        node = network.get(&result.to_string()).unwrap();
+        node = next_node(dir, node, &network);
         steps += 1;
     }
     steps
+}
+
+fn walk_network_for_nodeZ(network: &HashMap<String, Node>, instructions: &Vec<Direction>, start: &str) -> usize {
+    let mut node = network.get(start).unwrap();
+    let mut steps: usize = 0;
+    while !node.name.ends_with("Z") {
+        let dir = &instructions[steps % instructions.len()];
+        node = next_node(dir, node, &network);
+        steps += 1;
+    }
+    steps
+}
+
+fn next_node<'a>(dir: &Direction, current: &Node, network: &'a HashMap<String, Node>) -> &'a Node {
+    let result = current.pick(dir);
+    network.get(&result.to_string()).unwrap()
+}
+
+fn walk_network_02(network: &HashMap<String, Node>, instructions: &Vec<Direction>) -> usize {
+    let nodes: Vec<&Node> = start_node(&network);
+    debug(&nodes);
+    nodes
+        .iter()
+        .map(|node| walk_network_for_nodeZ(network, instructions, &node.name))
+        .fold(1, |a, b| lcm(&[a, b]))
+}
+
+fn start_node(network: &HashMap<String, Node>) -> Vec<&Node> {
+    network.values().into_iter().filter(|n| n.name.ends_with("A")).collect()
+}
+
+// Copied this from https://github.com/TheAlgorithms/Rust/blob/master/src/math/lcm_of_n_numbers.rs
+pub fn lcm(nums: &[usize]) -> usize {
+    if nums.len() == 1 {
+        return nums[0];
+    }
+    let a = nums[0];
+    let b = lcm(&nums[1..]);
+    a * b / gcd_of_two_numbers(a, b)
+}
+
+// Copied this from https://github.com/TheAlgorithms/Rust/blob/master/src/math/lcm_of_n_numbers.rs
+fn gcd_of_two_numbers(a: usize, b: usize) -> usize {
+    if b == 0 {
+        return a;
+    }
+    gcd_of_two_numbers(b, a % b)
 }
 
 fn instructions(lines: &str) -> Vec<Direction> {
@@ -109,6 +171,12 @@ mod tests {
         assert_eq!(2, aoc_8_1(EXAMPLE_01));
         assert_eq!(6, aoc_8_1(EXAMPLE_02));
         assert_eq!(23147, aoc_8_1(INPUT));
+    }
+
+    #[test]
+    fn aoc_8_2_test() {
+        assert_eq!(6, aoc_8_2(EXAMPLE_03));
+        assert_eq!(23147, aoc_8_2(INPUT));
     }
 
     #[test]
