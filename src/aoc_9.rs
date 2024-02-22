@@ -1,5 +1,3 @@
-
-
 use crate::helper::{self, debug};
 
 #[allow(dead_code)]
@@ -25,8 +23,9 @@ fn history(line: Vec<usize>) -> usize {
         new_line = diffs(&new_line);
         lines.push(new_line.clone());
     }
-    debug(&lines);
-    0
+    lines.iter()
+        .map(|v| v.last().unwrap())
+        .sum()
 }
 
 fn diffs(new_line: &Vec<usize>) -> Vec<usize> {
@@ -41,6 +40,6 @@ mod tests {
 
     #[test]
     fn aoc_9_1_test() {
-        assert_eq!(2, aoc_9_1(EXAMPLE_01));
+        assert_eq!(114, aoc_9_1(EXAMPLE_01));
     }
 }
