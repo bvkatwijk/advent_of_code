@@ -37,10 +37,12 @@ fn history(line: Vec<i64>) -> i64 {
 }
 
 fn history_beginning(line: Vec<i64>) -> i64 {
-    pyramid(line)
-        .iter()
-        .map(|v| v.last().unwrap())
-        .sum()
+    let mut rev = pyramid(line);
+    rev.reverse();
+    rev.iter()
+        .map(|v| *v.first().unwrap())
+        .reduce(|a,b| b - a)
+        .unwrap()
 }
 
 fn pyramid(line: Vec<i64>) -> Vec<Vec<i64>> {
@@ -54,7 +56,9 @@ fn pyramid(line: Vec<i64>) -> Vec<Vec<i64>> {
 }
 
 fn diffs(new_line: &Vec<i64>) -> Vec<i64> {
-    new_line.windows(2).map(|w| w[1] - w[0]).collect()
+    new_line.windows(2)
+        .map(|w| w[1] - w[0])
+        .collect()
 }
 
 #[cfg(test)]
@@ -69,6 +73,7 @@ mod tests {
 
     #[test]
     fn aoc_9_2_test() {
-        assert_eq!(5, aoc_9_2(EXAMPLE_01));
+        assert_eq!(2, aoc_9_2(EXAMPLE_01));
+        assert_eq!(971, aoc_9_2(INPUT));
     }
 }
