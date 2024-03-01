@@ -8,7 +8,8 @@ mod helper;
 // mod aoc_6;
 // mod aoc_7;
 // mod aoc_8;
-mod aoc_9;
+// mod aoc_9;
+mod aoc_10;
 
 fn main() {
     
