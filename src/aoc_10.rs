@@ -5,14 +5,33 @@ const EXAMPLE_01: &str = "./src/aoc_10/example_1.txt";
 #[allow(dead_code)]
 const INPUT: &str = "./src/aoc_10/input.txt";
 
-// #[allow(dead_code)]
-// fn aoc_10_1(path: &str) -> i64 {
-//     let grid: Vec<Vec<String>> = helper::file_lines(path)
-//         .map(Result::unwrap)
-//         .flat_map(chars)
-//         .collect();
-//     0
-// }
+#[allow(dead_code)]
+fn aoc_10_1(path: &str) -> i64 {
+    let grid: Vec<Vec<Pipe>> = create_grid(path);
+    let start: (usize, usize) = find_start(grid);
+    0
+}
+
+fn create_grid(path: &str) -> Vec<Vec<Pipe>> {
+    helper::file_lines(path)
+        .map(Result::unwrap)
+        .map(Pipe::parse_line)
+        .collect()
+}
+
+fn find_start(grid: Vec<Vec<Pipe>>) -> (usize, usize) {
+    grid.iter()
+        .enumerate()
+        .find_map(|(index, value)| vec_find_start(value).map(|it| (index, it)))
+        .unwrap()
+}
+
+fn vec_find_start(vec: &Vec<Pipe>) -> Option<usize> {
+    vec.iter()
+        .enumerate()
+        .find(|(_, value)| Pipe::Start.eq(value))
+        .map(|(index, _)| index)
+}
 
 #[derive(Debug, PartialEq, Eq, Hash)]
 enum Pipe {
@@ -60,7 +79,6 @@ impl Pipe {
 // }
 
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -70,6 +88,11 @@ mod tests {
     //     assert_eq!(114, aoc_10_1(EXAMPLE_01));
     //     // assert_eq!(1725987467, aoc_10_1(INPUT));
     // }
+
+    #[test]
+    fn find_start_test() {
+        assert_eq!((1, 1), find_start(create_grid(EXAMPLE_01)));
+    }
 
     #[test]
     fn pipe_parse() {
