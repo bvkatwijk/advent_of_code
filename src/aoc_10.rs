@@ -3,12 +3,14 @@ use crate::helper;
 #[allow(dead_code)]
 const EXAMPLE_01: &str = "./src/aoc_10/example_1.txt";
 #[allow(dead_code)]
+const EXAMPLE_02: &str = "./src/aoc_10/example_2.txt";
+#[allow(dead_code)]
 const INPUT: &str = "./src/aoc_10/input.txt";
 
 #[allow(dead_code)]
 fn aoc_10_1(path: &str) -> i64 {
     let grid: Vec<Vec<Pipe>> = create_grid(path);
-    let start: (usize, usize) = find_start(grid);
+    let start: (usize, usize) = find_start(&grid);
     0
 }
 
@@ -19,7 +21,7 @@ fn create_grid(path: &str) -> Vec<Vec<Pipe>> {
         .collect()
 }
 
-fn find_start(grid: Vec<Vec<Pipe>>) -> (usize, usize) {
+fn find_start(grid: &Vec<Vec<Pipe>>) -> (usize, usize) {
     grid.iter()
         .enumerate()
         .find_map(|(index, value)| vec_find_start(value).map(|it| (index, it)))
@@ -91,7 +93,8 @@ mod tests {
 
     #[test]
     fn find_start_test() {
-        assert_eq!((1, 1), find_start(create_grid(EXAMPLE_01)));
+        assert_eq!((1, 1), find_start(&create_grid(EXAMPLE_01)));
+        assert_eq!((2, 0), find_start(&create_grid(EXAMPLE_02)));
     }
 
     #[test]
