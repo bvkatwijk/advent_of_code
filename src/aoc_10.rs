@@ -17,7 +17,8 @@ fn aoc_10_1(path: &str) -> i64 {
 fn create_grid(path: &str) -> Vec<Vec<Pipe>> {
     helper::file_lines(path)
         .map(Result::unwrap)
-        .map(Pipe::parse_line)
+        .enumerate()
+        .map(|(i, v)| Pipe::parse_line(i, &v))
         .collect()
 }
 
@@ -31,12 +32,19 @@ fn find_start(grid: &Vec<Vec<Pipe>>) -> (usize, usize) {
 fn vec_find_start(vec: &Vec<Pipe>) -> Option<usize> {
     vec.iter()
         .enumerate()
-        .find(|(_, value)| Pipe::Start.eq(value))
+        .find(|(_, value)| Kind::Start.eq(&value.kind))
         .map(|(index, _)| index)
 }
 
+fn path_length(grid: &Vec<Vec<Pipe>>) -> usize {
+    let mut count: usize = 0;
+    // let start: Pipe = find_start(grid);
+    // let mut one_current: Pipe = 0;
+    0
+}
+
 #[derive(Debug, PartialEq, Eq, Hash)]
-enum Pipe {
+enum Kind {
     Vertical,
     Horizontal,
     CornerNE,
@@ -44,29 +52,49 @@ enum Pipe {
     CornerSe,
     CornerSw,
     Ground,
-    Start   
+    Start,
+}
+
+#[derive(Debug, PartialEq, Eq, Hash)]
+struct Pipe {
+    kind: Kind,
+    x: usize,
+    y: usize,
+}
+
+#[derive(Debug, PartialEq, Eq, Hash)]
+enum Direction {
+    North,
+    East,
+    South,
+    West,
 }
 
 impl Pipe {
-    fn parse_line(l : String) -> Vec<Pipe> {
+    fn parse_line(x: usize, l: &str) -> Vec<Pipe> {
         l.split("")
             .into_iter()
             .filter(|s| !s.is_empty())
-            .map(Pipe::parse)
+            .enumerate()
+            .map(|(index, value)| Pipe {
+                kind: Pipe::parse(value),
+                x: x,
+                y: index,
+            })
             .collect()
     }
 
-    fn parse(c: &str) -> Pipe {
+    fn parse(c: &str) -> Kind {
         match c {
-            "|" => Pipe::Vertical,
-            "-" => Pipe::Horizontal,
-            "L" => Pipe::CornerNE,
-            "J" => Pipe::CornerNw,
-            "7" => Pipe::CornerSw,
-            "F" => Pipe::CornerSe,
-            "." => Pipe::Ground,
-            "S" => Pipe::Start,
-            _ => panic!("unknown: {}", c)
+            "|" => Kind::Vertical,
+            "-" => Kind::Horizontal,
+            "L" => Kind::CornerNE,
+            "J" => Kind::CornerNw,
+            "7" => Kind::CornerSw,
+            "F" => Kind::CornerSe,
+            "." => Kind::Ground,
+            "S" => Kind::Start,
+            _ => panic!("unknown: {}", c),
         }
     }
 }
@@ -79,7 +107,6 @@ impl Pipe {
 // fn aoc_10_2(path: &str) -> i64 {
 
 // }
-
 
 #[cfg(test)]
 mod tests {
@@ -100,8 +127,42 @@ mod tests {
     #[test]
     fn pipe_parse() {
         assert_eq!(
-            vec![Pipe::Ground, Pipe::Start, Pipe::Horizontal, Pipe::CornerSw, Pipe::Ground],
-            Pipe::parse_line(".S-7.".to_owned())
+            vec![Pipe {
+                kind: Kind::Start,
+                x: 0,
+                y: 0
+            }],
+            Pipe::parse_line(0, "S")
+        );
+        assert_eq!(
+            vec![
+                Pipe {
+                    kind: Kind::Ground,
+                    x: 1,
+                    y: 0
+                },
+                Pipe {
+                    kind: Kind::Start,
+                    x: 1,
+                    y: 1
+                },
+                Pipe {
+                    kind: Kind::Horizontal,
+                    x: 1,
+                    y: 2
+                },
+                Pipe {
+                    kind: Kind::CornerSw,
+                    x: 1,
+                    y: 3
+                },
+                Pipe {
+                    kind: Kind::Ground,
+                    x: 1,
+                    y: 4
+                }
+            ],
+            Pipe::parse_line(1, ".S-7.")
         );
     }
 
