@@ -1,4 +1,4 @@
-use crate::helper;
+use crate::{direction::Direction, helper};
 
 #[allow(dead_code)]
 const EXAMPLE_01: &str = "./src/aoc_10/example_1.txt";
@@ -55,19 +55,26 @@ enum Kind {
     Start,
 }
 
+impl Kind {
+    fn dirs(&self) -> Option<(Direction, Direction)> {
+        match self {
+            Kind::Vertical => Some((Direction::North, Direction::South)),
+            Kind::Horizontal => Some((Direction::East, Direction::West)),
+            Kind::CornerNE => Some((Direction::North, Direction::East)),
+            Kind::CornerNw => Some((Direction::North, Direction::West)),
+            Kind::CornerSe => Some((Direction::South, Direction::East)),
+            Kind::CornerSw => Some((Direction::South, Direction::West)),
+            Kind::Ground => None,
+            Kind::Start => None
+        }
+    }
+}
+
 #[derive(Debug, PartialEq, Eq, Hash)]
 struct Pipe {
     kind: Kind,
     x: usize,
     y: usize,
-}
-
-#[derive(Debug, PartialEq, Eq, Hash)]
-enum Direction {
-    North,
-    East,
-    South,
-    West,
 }
 
 impl Pipe {
@@ -112,11 +119,11 @@ impl Pipe {
 mod tests {
     use super::*;
 
-    // #[test]
-    // fn aoc_10_1_test() {
-    //     assert_eq!(114, aoc_10_1(EXAMPLE_01));
-    //     // assert_eq!(1725987467, aoc_10_1(INPUT));
-    // }
+    #[test]
+    fn aoc_10_1_test() {
+        // assert_eq!(4, aoc_10_1(EXAMPLE_01));
+        // assert_eq!(1725987467, aoc_10_1(INPUT));
+    }
 
     #[test]
     fn find_start_test() {
