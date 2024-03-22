@@ -1,4 +1,4 @@
-use crate::{direction::Direction, helper};
+use crate::{direction::{self, Direction}, helper};
 
 #[allow(dead_code)]
 const EXAMPLE_01: &str = "./src/aoc_10/example_1.txt";
@@ -41,6 +41,21 @@ fn path_length(grid: &Vec<Vec<Pipe>>) -> usize {
     // let start: Pipe = find_start(grid);
     // let mut one_current: Pipe = 0;
     0
+}
+
+// Walk grid from position in direction
+fn navigate<'a>(grid: &'a Vec<Vec<Pipe>>, pos: &Pipe, direction: Direction) -> &'a Pipe {
+    let new_pos = walk((&pos.x, &pos.y), direction);
+    &grid[new_pos.0][new_pos.1]
+}
+
+fn walk(pos: (&usize, &usize), direction: Direction) -> (usize, usize) {
+    match direction {
+        Direction::North => (pos.0 - 1, *pos.1),
+        Direction::East => (*pos.0, pos.1 + 1),
+        Direction::South => (pos.0 + 1, *pos.1),
+        Direction::West => (*pos.0, pos.1 - 1),
+    }
 }
 
 #[derive(Debug, PartialEq, Eq, Hash)]
@@ -129,6 +144,21 @@ mod tests {
     fn find_start_test() {
         assert_eq!((1, 1), find_start(&create_grid(EXAMPLE_01)));
         assert_eq!((2, 0), find_start(&create_grid(EXAMPLE_02)));
+    }
+
+    #[test]
+    fn navigate_test() {
+        let grid = create_grid(EXAMPLE_01);
+        let p_12 = &grid[1][2];
+        assert_eq!(p_12, navigate(&grid, &grid[1][1], Direction::East));
+    }
+
+    #[test]
+    fn walk_test() {
+        assert_eq!((0,1), walk((&1,&1), Direction::North));
+        assert_eq!((1,2), walk((&1,&1), Direction::East));
+        assert_eq!((2,1), walk((&1,&1), Direction::South));
+        assert_eq!((1,0), walk((&1,&1), Direction::West));
     }
 
     #[test]
