@@ -51,8 +51,8 @@ pub fn part_two(input: &str) -> Option<u32> {
     }
 
     let mut diff: u32 = 0;
-    for (pos, e) in first_list.iter().enumerate() {
-        diff += first_list[pos] * sec_hist.get(&first_list[pos]).unwrap_or(&0);
+    for e in first_list.iter() {
+        diff += e * sec_hist.get(&e).unwrap_or(&0);
     }
     Some(diff)
 }
@@ -71,6 +71,10 @@ mod tests {
 
     #[test]
     fn test_part_two() {
+        assert_eq!(part_two("1 1"), Some(1));
+        assert_eq!(part_two("1 1\n1 1"), Some(4));
+        assert_eq!(part_two("1 1\n1 3"), Some(2));
+
         let result = part_two(&advent_of_code::template::read_file("examples", DAY));
         assert_eq!(result, Some(31));
     }
