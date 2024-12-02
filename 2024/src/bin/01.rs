@@ -1,7 +1,8 @@
 advent_of_code::solution!(1);
 
 pub fn part_one(input: &str) -> Option<u32> {
-    None
+    let lines = input.lines();
+    Some(1)
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
@@ -14,8 +15,10 @@ mod tests {
 
     #[test]
     fn test_part_one() {
+        assert_eq!(part_one("1 1"), Some(1));
+
         let result = part_one(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
+        assert_eq!(result, Some(11));
     }
 
     #[test]
