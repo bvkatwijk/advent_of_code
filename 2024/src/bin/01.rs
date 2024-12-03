@@ -1,4 +1,4 @@
-use std::{collections::HashMap, hash::Hash, ops::Index};
+use std::collections::HashMap;
 
 advent_of_code::solution!(1);
 
@@ -23,7 +23,7 @@ pub fn part_one(input: &str) -> Option<u32> {
     sec_list.sort();
 
     let mut diff: u32 = 0;
-    for (pos, e) in first_list.iter().enumerate() {
+    for (pos, _e) in first_list.iter().enumerate() {
         diff += first_list[pos].abs_diff(sec_list[pos])
     }
 
