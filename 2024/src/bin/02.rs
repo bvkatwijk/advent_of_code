@@ -9,7 +9,12 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    let result: usize = input
+        .lines()
+        .map(|l| parse_vec_u32(l))
+        .filter(|v| safe_with_problem_dampener(v))
+        .count();
+    u32::try_from(result).ok()
 }
 
 pub fn parse_vec_u32(input: &str) -> Vec<u32> {
