@@ -21,6 +21,31 @@ pub fn parse_vec_u32(input: &str) -> Vec<u32> {
 
 pub fn safe(nums: &Vec<u32>) -> bool {
     false
+pub fn safe_with_problem_dampener(nums: &Vec<u32>) -> bool {
+    safe(nums) || safe_bar_one(nums)
+}
+
+pub fn diffs(num: &Vec<u32>) -> Vec<i32> {
+    num.windows(2)
+        .map(|w| w[0] as i32 - w[1] as i32)
+        .collect()
+}
+
+pub fn safe_bar_one(nums: &Vec<u32>) -> bool {
+    for (pos, _el) in nums.iter().enumerate() {
+        let mut new_nums = nums.clone();
+        new_nums.remove(pos);
+        // return as soon as it is safe
+        if safe(&new_nums) {
+            return true
+        }
+    }
+    return false;
+}
+// returns whether difference is ok, and whether it is increasing
+pub fn analyze_window(window: &[u32]) -> (bool, bool) {
+    let diff = window[0].abs_diff(window[1]);
+    (diff < 1 || diff > 3, window[0] > window[1])
 }
 
 #[cfg(test)]
