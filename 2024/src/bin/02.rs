@@ -1,5 +1,3 @@
-use core::num;
-use std::{iter, ops::Sub};
 
 advent_of_code::solution!(2);
 
