@@ -1,7 +1,11 @@
+use core::num;
+use std::{iter, ops::Sub};
+
 advent_of_code::solution!(2);
 
 pub fn part_one(input: &str) -> Option<u32> {
-    let result: usize = input.lines()
+    let result: usize = input
+        .lines()
         .map(|l| parse_vec_u32(l))
         .filter(|v| safe(v))
         .count();
