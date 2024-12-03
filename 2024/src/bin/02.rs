@@ -13,9 +13,7 @@ pub fn part_two(input: &str) -> Option<u32> {
 }
 
 pub fn parse_vec_u32(input: &str) -> Vec<u32> {
-    let numbers: Result<Vec<u32>, _> = input.split_whitespace()
-        .map(str::parse)
-        .collect();
+    let numbers: Result<Vec<u32>, _> = input.split_whitespace().map(str::parse).collect();
     numbers.unwrap()
 }
 
