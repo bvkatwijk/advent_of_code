@@ -39,6 +39,22 @@ mod tests {
     }
 
     #[test]
+    fn test_safe() {
+        assert_eq!(safe(&vec![1, 2, 3]), true)
+    }
+
+    #[test]
+    fn test_safe_bar_one() {
+        assert_eq!(safe_bar_one(&vec![1, 5, 2, 3]), true)
+    }
+
+    #[test]
+    fn test_safe_with_problem_dampener() {
+        assert_eq!(safe_with_problem_dampener(&vec![1, 5, 2, 3]), true);
+        assert_eq!(safe_with_problem_dampener(&vec![1, 10, 2, 3]), true);
+    }
+
+    #[test]
     fn test_part_two() {
         let result = part_two(&advent_of_code::template::read_file("examples", DAY));
         assert_eq!(result, Some(4));
