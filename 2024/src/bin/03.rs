@@ -51,71 +51,10 @@ pub fn muls(input: &str) -> u32 {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    let iter = input.chars();
-
-    let mut total = 0;
-
-    let mut prev: Mul = Mul::Close;
-    let mut toggle = true;
-    let lit_do: &str = "do()";
-    let mut count_do = 0;
-    let lit_dont: &str = "don't()";
-    let mut count_dont = 0;
-
-    let mut one: String = "".to_string();
-    let mut two: String = "".to_string();
-
-    for c in iter {
-        if toggle {
-            match c {
-                c if c == lit_dont.chars().nth(count_dont).unwrap() => {
-                    println!("match progress don't: {c}");
-                    if c == ')' {
-                        println!("disabling!");
-                        toggle = false;
-                        reset(&mut prev, &mut one, &mut two, &mut count_do, &mut count_dont);
-                    } else {
-                        count_dont += 1
-                    }
-                }
-                'm' if prev == Mul::Close => prev = Mul::M,
-                'u' if prev == Mul::M => prev = Mul::U,
-                'l' if prev == Mul::U => prev = Mul::L,
-                '(' if prev == Mul::L => prev = Mul::Open,
-                '0'..='9' if prev == Mul::Open => one.push(c),
-                ',' if prev == Mul::Open && one != "" => prev = Mul::Comma,
-                '0'..='9' if prev == Mul::Comma => two.push(c),
-                ')' if prev == Mul::Comma && two != "" => {
-                    total += one.parse::<u32>().unwrap() * two.parse::<u32>().unwrap();
-                    reset(&mut prev, &mut one, &mut two, &mut count_do, &mut count_dont);
-                }
-                _ => {
-                    reset(&mut prev, &mut one, &mut two, &mut count_do, &mut count_dont);
-                }
-            }
-        } else {
-            if c == lit_do.chars().nth(count_do).unwrap() {
-                println!("match progress do: {c}");
-                if c == ')' {
-                    println!("enabling!");
-                    toggle = true;
-                    reset(&mut prev, &mut one, &mut two, &mut count_do, &mut count_dont);
-                } else {
-                    count_do += 1
-                }
-            }
-        }
-    }
-
-    Some(total)
-}
-
-fn reset(prev: &mut Mul, one: &mut String, two: &mut String, count_do: &mut usize, count_dont: &mut usize) {
-    *prev = Mul::Close;
-    *one = "".to_string();
-    *two = "".to_string();
-    *count_do = 0;
-    *count_dont = 0;
+    Some(input.split("do()") // split into do() segments
+        .map(|seg| seg.split("don't()").into_iter().nth(0).unwrap()) // ignore everything after don't()
+        .map(|s| muls(s)) // interpret muls
+        .sum()) // sum partials
 }
 
 #[cfg(test)]
@@ -130,6 +69,8 @@ mod tests {
 
     #[test]
     fn test_part_two() {
+        assert_eq!(part_two("don't()mul(1,2)"), Some(0));
+
         let result = part_two(&advent_of_code::template::read_file("examples", DAY));
         assert_eq!(result, Some(48));
     }
