@@ -8,9 +8,7 @@ pub struct Entry {
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
-    let lines: Vec<Entry> = input.lines()
-        .flat_map(|l| parse(l))
-        .collect();
+    let lines: Vec<Entry> = input.lines().flat_map(|l| parse(l)).collect();
 
     let mut first_list: Vec<u32> = Vec::with_capacity(lines.len());
     let mut sec_list: Vec<u32> = Vec::with_capacity(lines.len());
@@ -32,16 +30,21 @@ pub fn part_one(input: &str) -> Option<u32> {
 
 pub fn parse(input: &str) -> Result<Entry, &'static str> {
     let mut parts = input.split_whitespace();
-    let left = parts.next().ok_or("Bad input")?.parse::<u32>().map_err(|_| "invalid: first")?;
-    let right = parts.next().ok_or("Bad input")?.parse::<u32>().map_err(|_| "invalid: second")?;
-    Ok(Entry { left, right})
+    let left = parts
+        .next()
+        .ok_or("Bad input")?
+        .parse::<u32>()
+        .map_err(|_| "invalid: first")?;
+    let right = parts
+        .next()
+        .ok_or("Bad input")?
+        .parse::<u32>()
+        .map_err(|_| "invalid: second")?;
+    Ok(Entry { left, right })
 }
 
-
 pub fn part_two(input: &str) -> Option<u32> {
-    let lines: Vec<Entry> = input.lines()
-        .flat_map(|l| parse(l))
-        .collect();
+    let lines: Vec<Entry> = input.lines().flat_map(|l| parse(l)).collect();
 
     let mut first_list: Vec<u32> = Vec::with_capacity(lines.len());
     let mut sec_hist: HashMap<u32, u32> = HashMap::new();

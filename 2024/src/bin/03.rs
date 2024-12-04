@@ -8,7 +8,7 @@ pub enum Mul {
     Open,
     Num,
     Comma,
-    Close
+    Close,
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
@@ -51,10 +51,13 @@ pub fn muls(input: &str) -> u32 {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    Some(input.split("do()") // split into do() segments
-        .map(|seg| seg.split("don't()").into_iter().nth(0).unwrap()) // ignore everything after don't()
-        .map(|s| muls(s)) // interpret muls
-        .sum()) // sum partials
+    Some(
+        input
+            .split("do()") // split into do() segments
+            .map(|seg| seg.split("don't()").into_iter().nth(0).unwrap()) // ignore everything after don't()
+            .map(|s| muls(s)) // interpret muls
+            .sum(),
+    ) // sum partials
 }
 
 #[cfg(test)]

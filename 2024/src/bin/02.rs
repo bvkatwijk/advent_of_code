@@ -1,4 +1,3 @@
-
 advent_of_code::solution!(2);
 
 pub fn part_one(input: &str) -> Option<u32> {
@@ -38,7 +37,7 @@ pub fn safe(nums: &Vec<u32>) -> bool {
                 if diff_and_inc.1 != b {
                     return false;
                 }
-            },
+            }
             None => increasing = Some(window[0] > window[1]),
         }
     }
@@ -51,9 +50,7 @@ pub fn safe_with_problem_dampener(nums: &Vec<u32>) -> bool {
 }
 
 pub fn diffs(num: &Vec<u32>) -> Vec<i32> {
-    num.windows(2)
-        .map(|w| w[0] as i32 - w[1] as i32)
-        .collect()
+    num.windows(2).map(|w| w[0] as i32 - w[1] as i32).collect()
 }
 
 pub fn safe_bar_one(nums: &Vec<u32>) -> bool {
@@ -62,7 +59,7 @@ pub fn safe_bar_one(nums: &Vec<u32>) -> bool {
         new_nums.remove(pos);
         // return as soon as it is safe
         if safe(&new_nums) {
-            return true
+            return true;
         }
     }
     return false;
