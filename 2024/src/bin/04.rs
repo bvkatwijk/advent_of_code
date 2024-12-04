@@ -58,16 +58,21 @@ pub fn diag(input: &str) -> String {
 }
 
 pub fn part_two(input: &str) -> Option<usize> {
-    Some(count_xmas_cross(input))
+    Some(
+        count_xmas_cross(input)
+            + count_xmas_cross(&flip_horizontal(input))
+            + count_xmas_cross(&rotate(input))
+            + count_xmas_cross(&flip_horizontal(&rotate(input)))
+    )
 }
 
 pub fn count_xmas_cross(input: &str) -> usize {
     let size = input.lines().nth(0).unwrap().len();
-    let mut strs : Vec<Vec<String>> = vec![vec![""; size]; size];
+    let mut strs : Vec<Vec<char>> = vec![vec![' '; size]; size];
     input.lines()
         .enumerate()
         .for_each(|(y, l)| l.chars().enumerate().for_each(|(x, c)| {
-            strs[x][y] = c.to_string();
+            strs[x][y] = c;
     }));
     input.lines()
         .enumerate()
@@ -75,18 +80,18 @@ pub fn count_xmas_cross(input: &str) -> usize {
         .map(|(y, l)| l.chars()
             .enumerate()
             .take(size - 2)
-            .filter(|(x, c)|  has_xmas_cross(strs, *x, y))
+            .filter(|(x, c)|  has_xmas_cross(&strs, *x, y))
             .count()
         )
     .sum()
 }
 
-pub fn has_xmas_cross(input: Vec<Vec<&str>>, x: usize, y: usize) -> bool {
-    input[x][y] == "M"
-        && input[x][y+2] == "M"
-        && input[x+1][1] == "A"
-        && input[x+2][y] == "S"
-        && input[x][y+2] == "S"
+pub fn has_xmas_cross(input: &Vec<Vec<char>>, x: usize, y: usize) -> bool {
+    input[x][y] == 'M'
+        && input[x][y+2] == 'M'
+        && input[x+1][y+1] == 'A'
+        && input[x+2][y] == 'S'
+        && input[x+2][y+2] == 'S'
 }
 
 #[cfg(test)]
@@ -101,11 +106,16 @@ mod tests {
 
     #[test]
     fn test_has_xmas_cross() {
-        assert_eq!(has_xmas_cross(vec![
-            vec!["M", "-", "M"],
-            vec!["-", "A", "-"],
-            vec!["S", "-", "S"]
+        assert_eq!(has_xmas_cross(&vec![
+            vec!['M', '-', 'M'],
+            vec!['-', 'A', '-'],
+            vec!['S', '-', 'S']
         ], 0, 0), true);
+    }
+
+    #[test]
+    fn test_count_xmas_cross() {
+
     }
 
     #[test]
