@@ -6,8 +6,8 @@ pub fn part_one(input: &str) -> Option<usize> {
     Some(
         count_horizontal(input)
             + count_horizontal(&rotate(input))
-            + count_horizontal(diag(input))
-            + count_horizontal(diag(&rotate(input)))
+            + count_horizontal(&diag(input))
+            + count_horizontal(&diag(&rotate(input)))
     )
     // TODO diag -> how to ??
 }
@@ -35,8 +35,22 @@ pub fn rotate(input: &str) -> String {
         .join("\n")
 }
 
-pub fn diag(input: &str) -> &str {
-    ""
+pub fn diag(input: &str) -> String {
+    let size = input.lines().nth(0).unwrap().len();
+    let diags = (size*2)-1;
+    let mut strs : Vec<Vec<String>> = vec![vec![String::new(); size]; diags];
+
+    input.lines()
+        .enumerate()
+        .for_each(|(y, l)| l.chars().enumerate().for_each(|(x, c)| {
+            // push the value (c) into the correct diag
+            strs[x+y][y] = c.to_string();
+    }));
+    strs
+        .iter()
+        .map(|v| v.join(""))
+        .collect::<Vec<String>>()
+        .join("\n")
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
