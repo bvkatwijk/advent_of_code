@@ -12,6 +12,12 @@ pub fn part_one(input: &str) -> Option<usize> {
     // TODO diag -> how to ??
 }
 
+pub fn flip_horizontal(input: &str) -> String {
+    input.lines()
+        .rev()
+        .collect()
+}
+
 // both xmas and reverse (samx)
 pub fn count_horizontal(input: &str) -> usize {
     let rev: String = XMAS.chars().rev().collect::<String>();
@@ -43,7 +49,6 @@ pub fn diag(input: &str) -> String {
     input.lines()
         .enumerate()
         .for_each(|(y, l)| l.chars().enumerate().for_each(|(x, c)| {
-            // push the value (c) into the correct diag
             strs[x+y][y] = c.to_string();
     }));
     strs
@@ -70,6 +75,6 @@ mod tests {
     #[test]
     fn test_part_two() {
         let result = part_two(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
+        assert_eq!(result, Some(9));
     }
 }
