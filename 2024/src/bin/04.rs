@@ -9,7 +9,6 @@ pub fn part_one(input: &str) -> Option<usize> {
             + count_horizontal(&diag(input))
             + count_horizontal(&diag(&rotate(input)))
     )
-    // TODO diag -> how to ??
 }
 
 pub fn flip_horizontal(input: &str) -> String {
