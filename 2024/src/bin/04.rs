@@ -57,8 +57,36 @@ pub fn diag(input: &str) -> String {
         .join("\n")
 }
 
-pub fn part_two(input: &str) -> Option<u32> {
-    None
+pub fn part_two(input: &str) -> Option<usize> {
+    Some(count_xmas_cross(input))
+}
+
+pub fn count_xmas_cross(input: &str) -> usize {
+    let size = input.lines().nth(0).unwrap().len();
+    let mut strs : Vec<Vec<String>> = vec![vec![""; size]; size];
+    input.lines()
+        .enumerate()
+        .for_each(|(y, l)| l.chars().enumerate().for_each(|(x, c)| {
+            strs[x][y] = c.to_string();
+    }));
+    input.lines()
+        .enumerate()
+        .take(size - 2)
+        .map(|(y, l)| l.chars()
+            .enumerate()
+            .take(size - 2)
+            .filter(|(x, c)|  has_xmas_cross(strs, *x, y))
+            .count()
+        )
+    .sum()
+}
+
+pub fn has_xmas_cross(input: Vec<Vec<&str>>, x: usize, y: usize) -> bool {
+    input[x][y] == "M"
+        && input[x][y+2] == "M"
+        && input[x+1][1] == "A"
+        && input[x+2][y] == "S"
+        && input[x][y+2] == "S"
 }
 
 #[cfg(test)]
@@ -69,6 +97,15 @@ mod tests {
     fn test_part_one() {
         let result = part_one(&advent_of_code::template::read_file("examples", DAY));
         assert_eq!(result, Some(18));
+    }
+
+    #[test]
+    fn test_has_xmas_cross() {
+        assert_eq!(has_xmas_cross(vec![
+            vec!["M", "-", "M"],
+            vec!["-", "A", "-"],
+            vec!["S", "-", "S"]
+        ], 0, 0), true);
     }
 
     #[test]
