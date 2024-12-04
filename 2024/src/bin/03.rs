@@ -31,9 +31,9 @@ pub fn muls(input: &str) -> u32 {
             'l' if prev == Mul::U => prev = Mul::L,
             '(' if prev == Mul::L => prev = Mul::Open,
             '0'..='9' if prev == Mul::Open => one.push(c),
-            ',' if prev == Mul::Open && one != "" => prev = Mul::Comma,
+            ',' if prev == Mul::Open && !one.is_empty() => prev = Mul::Comma,
             '0'..='9' if prev == Mul::Comma => two.push(c),
-            ')' if prev == Mul::Comma && two != "" => {
+            ')' if prev == Mul::Comma && !two.is_empty() => {
                 total += one.parse::<u32>().unwrap() * two.parse::<u32>().unwrap();
                 prev = Mul::Close;
                 one = "".to_string();
@@ -54,8 +54,8 @@ pub fn part_two(input: &str) -> Option<u32> {
     Some(
         input
             .split("do()") // split into do() segments
-            .map(|seg| seg.split("don't()").into_iter().nth(0).unwrap()) // ignore everything after don't()
-            .map(|s| muls(s)) // interpret muls
+            .map(|seg| seg.split("don't()").next().unwrap()) // ignore everything after don't()
+            .map(muls) // interpret muls
             .sum(),
     ) // sum partials
 }

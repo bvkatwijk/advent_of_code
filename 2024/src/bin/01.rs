@@ -8,7 +8,7 @@ pub struct Entry {
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
-    let lines: Vec<Entry> = input.lines().flat_map(|l| parse(l)).collect();
+    let lines: Vec<Entry> = input.lines().flat_map(parse).collect();
 
     let mut first_list: Vec<u32> = Vec::with_capacity(lines.len());
     let mut sec_list: Vec<u32> = Vec::with_capacity(lines.len());
@@ -44,7 +44,7 @@ pub fn parse(input: &str) -> Result<Entry, &'static str> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    let lines: Vec<Entry> = input.lines().flat_map(|l| parse(l)).collect();
+    let lines: Vec<Entry> = input.lines().flat_map(parse).collect();
 
     let mut first_list: Vec<u32> = Vec::with_capacity(lines.len());
     let mut sec_hist: HashMap<u32, u32> = HashMap::new();
@@ -55,7 +55,7 @@ pub fn part_two(input: &str) -> Option<u32> {
 
     let mut diff: u32 = 0;
     for e in first_list.iter() {
-        diff += e * sec_hist.get(&e).unwrap_or(&0);
+        diff += e * sec_hist.get(e).unwrap_or(&0);
     }
     Some(diff)
 }

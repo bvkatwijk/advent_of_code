@@ -28,7 +28,7 @@ pub fn count_horizontal(input: &str) -> usize {
 }
 
 pub fn rotate(input: &str) -> String {
-    let size = input.lines().nth(0).unwrap().len();
+    let size = input.lines().next().unwrap().len();
     let mut strs: Vec<Vec<String>> = vec![vec![String::new(); size]; size];
     input.lines().enumerate().for_each(|(y, l)| {
         l.chars().enumerate().for_each(|(x, c)| {
@@ -42,7 +42,7 @@ pub fn rotate(input: &str) -> String {
 }
 
 pub fn diag(input: &str) -> String {
-    let size = input.lines().nth(0).unwrap().len();
+    let size = input.lines().next().unwrap().len();
     let diags = (size * 2) - 1;
     let mut strs: Vec<Vec<String>> = vec![vec![String::new(); size]; diags];
 
@@ -69,7 +69,7 @@ pub fn count_xmas_cross_all(input: &str) -> usize {
 }
 
 pub fn count_xmas_cross(input: &str) -> usize {
-    let size = input.lines().nth(0).unwrap().len();
+    let size = input.lines().next().unwrap().len();
     let mut strs: Vec<Vec<char>> = vec![vec![' '; size]; size];
     input.lines().enumerate().for_each(|(y, l)| {
         l.chars().enumerate().for_each(|(x, c)| {
@@ -90,7 +90,7 @@ pub fn count_xmas_cross(input: &str) -> usize {
         .sum()
 }
 
-pub fn has_xmas_cross(input: &Vec<Vec<char>>, x: usize, y: usize) -> bool {
+pub fn has_xmas_cross(input: &[Vec<char>], x: usize, y: usize) -> bool {
     input[x][y] == 'M'
         && input[x][y + 2] == 'M'
         && input[x + 1][y + 1] == 'A'

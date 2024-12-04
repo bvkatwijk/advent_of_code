@@ -3,7 +3,7 @@ advent_of_code::solution!(2);
 pub fn part_one(input: &str) -> Option<u32> {
     let result: usize = input
         .lines()
-        .map(|l| parse_vec_u32(l))
+        .map(parse_vec_u32)
         .filter(|v| safe(v))
         .count();
     u32::try_from(result).ok()
@@ -12,7 +12,7 @@ pub fn part_one(input: &str) -> Option<u32> {
 pub fn part_two(input: &str) -> Option<u32> {
     let result: usize = input
         .lines()
-        .map(|l| parse_vec_u32(l))
+        .map(parse_vec_u32)
         .filter(|v| safe_with_problem_dampener(v))
         .count();
     u32::try_from(result).ok()
@@ -24,7 +24,7 @@ pub fn parse_vec_u32(input: &str) -> Vec<u32> {
 }
 
 // map to all differences, must all be same sign and within 1--3
-pub fn safe(nums: &Vec<u32>) -> bool {
+pub fn safe(nums: &[u32]) -> bool {
     let mut increasing: Option<bool> = None;
     for window in nums.windows(2) {
         let diff_and_inc = analyze_window(window);
@@ -45,29 +45,29 @@ pub fn safe(nums: &Vec<u32>) -> bool {
 }
 // when failure detected, remove the problem element
 // if window is the first one, attempt with both first or second element removed, otherwise, remove second
-pub fn safe_with_problem_dampener(nums: &Vec<u32>) -> bool {
+pub fn safe_with_problem_dampener(nums: &[u32]) -> bool {
     safe(nums) || safe_bar_one(nums)
 }
 
-pub fn diffs(num: &Vec<u32>) -> Vec<i32> {
+pub fn diffs(num: &[u32]) -> Vec<i32> {
     num.windows(2).map(|w| w[0] as i32 - w[1] as i32).collect()
 }
 
-pub fn safe_bar_one(nums: &Vec<u32>) -> bool {
+pub fn safe_bar_one(nums: &[u32]) -> bool {
     for (pos, _el) in nums.iter().enumerate() {
-        let mut new_nums = nums.clone();
+        let mut new_nums = nums.to_owned();
         new_nums.remove(pos);
         // return as soon as it is safe
         if safe(&new_nums) {
             return true;
         }
     }
-    return false;
+    false
 }
 // returns whether difference is ok, and whether it is increasing
 pub fn analyze_window(window: &[u32]) -> (bool, bool) {
     let diff = window[0].abs_diff(window[1]);
-    (diff < 1 || diff > 3, window[0] > window[1])
+    (!(1..=3).contains(&diff), window[0] > window[1])
 }
 
 #[cfg(test)]
