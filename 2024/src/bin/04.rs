@@ -32,7 +32,7 @@ pub fn rotate(input: &str) -> String {
     }));
     strs
         .iter()
-        .map(|v| v.join("\n"))
+        .map(|v| v.join(""))
         .collect::<Vec<String>>()
         .join("\n")
 }
