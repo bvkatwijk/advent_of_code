@@ -4,9 +4,9 @@ pub fn part_one(input: &str) -> Option<usize> {
     let xmas = "XMAS";
     Some(
         count_horizontal(input)
-            + count_horizontal(rotate(input))
+            + count_horizontal(&rotate(input))
             + count_horizontal(diag(input))
-            + count_horizontal(rotate(diag(input)))
+            + count_horizontal(diag(&rotate(input)))
     )
     // TODO how to rotate ??
     // TODO diag -> how to ??
@@ -19,8 +19,20 @@ pub fn count_horizontal(input: &str) -> usize {
         .sum()
 }
 
-pub fn rotate(input: &str) -> &str {
-    ""
+pub fn rotate(input: &str) -> String {
+    let size = input.lines().nth(0).unwrap().len();
+    let mut strs : Vec<Vec<String>> = Vec::with_capacity(size);
+    input.lines()
+        .enumerate()
+        .for_each(|(y, l)| l.chars().enumerate().for_each(|(x, c)| {
+            println!("lets assign {c} to {x}, {y}");
+            strs[x][y] = c.to_string();
+    }));
+    strs
+        .iter()
+        .map(|v| v.join("\n"))
+        .collect::<Vec<String>>()
+        .join("\n")
 }
 
 pub fn diag(input: &str) -> &str {
