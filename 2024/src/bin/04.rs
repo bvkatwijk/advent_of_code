@@ -13,7 +13,7 @@ pub fn part_one(input: &str) -> Option<usize> {
 
 pub fn flip_horizontal(input: &str) -> String {
     input.lines()
-        .rev()
+        .map(|l| l.chars().rev().collect::<String>() + "\n")
         .collect()
 }
 
@@ -58,12 +58,14 @@ pub fn diag(input: &str) -> String {
 }
 
 pub fn part_two(input: &str) -> Option<usize> {
-    Some(
-        count_xmas_cross(input)
-            + count_xmas_cross(&flip_horizontal(input))
-            + count_xmas_cross(&rotate(input))
-            + count_xmas_cross(&flip_horizontal(&rotate(input)))
-    )
+    Some(count_xmas_cross_all(input))
+}
+
+pub fn count_xmas_cross_all(input: &str) -> usize {
+    count_xmas_cross(input)
+        + count_xmas_cross(&flip_horizontal(input))
+        + count_xmas_cross(&rotate(input))
+        + count_xmas_cross(&flip_horizontal(&rotate(input)))
 }
 
 pub fn count_xmas_cross(input: &str) -> usize {
@@ -116,6 +118,19 @@ mod tests {
     #[test]
     fn test_count_xmas_cross() {
         assert_eq!(count_xmas_cross("M.S\n.A.\nM.S"), 1);
+    }
+
+    #[test]
+    fn test_stuff() {
+        assert_eq!(count_xmas_cross(&flip_horizontal("S.M\n.A.\nS.M")), 1);
+    }
+
+    #[test]
+    fn test_count_xmas_cross_all() {
+        assert_eq!(count_xmas_cross_all("M.S.\n.A..\nM.S.\n...."), 1);
+        assert_eq!(count_xmas_cross_all("S.M.\n.A..\nS.M.\n...."), 1);
+        assert_eq!(count_xmas_cross_all("M.M.\n.A..\nS.S.\n...."), 1);
+        assert_eq!(count_xmas_cross_all("MMMM\n.AA.\nSSSS\n...."), 2);
     }
 
     #[test]
