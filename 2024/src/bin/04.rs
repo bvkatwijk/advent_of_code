@@ -9,7 +9,6 @@ pub fn part_one(input: &str) -> Option<usize> {
             + count_horizontal(diag(input))
             + count_horizontal(diag(&rotate(input)))
     )
-    // TODO how to rotate ??
     // TODO diag -> how to ??
 }
 
@@ -27,7 +26,6 @@ pub fn rotate(input: &str) -> String {
     input.lines()
         .enumerate()
         .for_each(|(y, l)| l.chars().enumerate().for_each(|(x, c)| {
-            println!("lets assign {c} to {x}, {y}");
             strs[x][y] = c.to_string();
     }));
     strs
