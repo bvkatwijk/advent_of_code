@@ -1,7 +1,8 @@
 advent_of_code::solution!(4);
 
+const XMAS: &str = "XMAS";
+
 pub fn part_one(input: &str) -> Option<usize> {
-    let xmas = "XMAS";
     Some(
         count_horizontal(input)
             + count_horizontal(&rotate(input))
@@ -14,14 +15,15 @@ pub fn part_one(input: &str) -> Option<usize> {
 
 // both xmas and reverse (samx)
 pub fn count_horizontal(input: &str) -> usize {
+    let rev: String = XMAS.chars().rev().collect::<String>();
     input.lines()
-        .map(|l| l.split("XMAS").count() - 1 + l.split("SAMX").count() - 1)
+        .map(|l| l.split(XMAS).count() - 1 + l.split(rev.as_str()).count() - 1)
         .sum()
 }
 
 pub fn rotate(input: &str) -> String {
     let size = input.lines().nth(0).unwrap().len();
-    let mut strs : Vec<Vec<String>> = Vec::with_capacity(size);
+    let mut strs : Vec<Vec<String>> = vec![vec![String::new(); size]; size];
     input.lines()
         .enumerate()
         .for_each(|(y, l)| l.chars().enumerate().for_each(|(x, c)| {
