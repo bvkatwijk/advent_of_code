@@ -80,7 +80,7 @@ pub fn count_xmas_cross(input: &str) -> usize {
         .map(|(y, l)| l.chars()
             .enumerate()
             .take(size - 2)
-            .filter(|(x, c)|  has_xmas_cross(&strs, *x, y))
+            .filter(|(x, _c)|  has_xmas_cross(&strs, *x, y))
             .count()
         )
     .sum()
@@ -115,7 +115,7 @@ mod tests {
 
     #[test]
     fn test_count_xmas_cross() {
-
+        assert_eq!(count_xmas_cross("M.S\n.A.\nM.S"), 1);
     }
 
     #[test]
