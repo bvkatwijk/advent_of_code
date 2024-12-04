@@ -12,8 +12,10 @@ pub enum Mul {
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
-    let iter = input.chars();
+    Some(muls(input))
+}
 
+pub fn muls(input: &str) -> u32 {
     let mut total = 0;
 
     let mut prev: Mul = Mul::Close;
@@ -22,7 +24,7 @@ pub fn part_one(input: &str) -> Option<u32> {
     // iterate over chars, if next is allowed, set next allowed,
     // if mul complete => parse, multiply, store
 
-    for c in iter {
+    for c in input.chars() {
         match c {
             'm' if prev == Mul::Close => prev = Mul::M,
             'u' if prev == Mul::M => prev = Mul::U,
@@ -45,10 +47,8 @@ pub fn part_one(input: &str) -> Option<u32> {
             }
         }
     }
-
-    Some(total)
+    total
 }
-
 
 pub fn part_two(input: &str) -> Option<u32> {
     let iter = input.chars();
