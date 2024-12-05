@@ -28,7 +28,7 @@ pub fn part_one(input: &str) -> Option<usize> {
 fn parse_usize_vec(input: &str) -> Vec<usize> {
     input.split(",")
         .into_iter()
-        .flat_map(str::parse::<usize>) // Do we even care that they are numbers? maybe could skip this
+        .flat_map(str::parse::<usize>)
         .collect()
 }
 
