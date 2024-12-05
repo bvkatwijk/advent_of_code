@@ -18,7 +18,6 @@ pub fn flip_horizontal(input: &str) -> String {
         .collect()
 }
 
-// both xmas and reverse (samx)
 pub fn count_horizontal(input: &str) -> usize {
     let rev: String = XMAS.chars().rev().collect::<String>();
     input

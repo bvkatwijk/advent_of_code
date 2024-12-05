@@ -55,8 +55,28 @@ fn middle(input: Vec<usize>) -> usize {
 }
 
 // TODO implement
-pub fn part_two(input: &str) -> Option<u32> {
-    None
+pub fn part_two(input: &str) -> Option<usize> {
+    let mut split_input = input.split("\n\n");
+
+    let rules: Vec<Rule> = split_input.next().unwrap()
+        .lines()
+        .map(|l| l.split("|"))
+        .map(|mut split| Rule { left: split.next().map(str::parse::<usize>).unwrap().unwrap(), right: split.next().map(str::parse::<usize>).unwrap().unwrap()})
+        .collect();
+
+    Some(split_input
+        .next()
+        .unwrap()
+        .lines()
+        .map(parse_usize_vec)
+        .filter(|l| !is_valid(l, &rules))
+        .map(|l| corect_order(&l, &rules))
+        .map(middle)
+        .sum())
+}
+
+fn corect_order(l: &[usize], rules: &[Rule]) -> Vec<usize> {
+    todo!()
 }
 
 #[cfg(test)]
@@ -87,6 +107,6 @@ mod tests {
     #[test]
     fn test_part_two() {
         let result = part_two(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
+        assert_eq!(result, Some(123));
     }
 }
