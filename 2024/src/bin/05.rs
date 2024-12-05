@@ -1,6 +1,11 @@
 advent_of_code::solution!(5);
 
 pub fn part_one(input: &str) -> Option<u32> {
+    let mut split = input.split("\n\n");
+    let a = split.next().unwrap();
+    let b = split.next().unwrap();
+
+    print!("{b}");
     None
 }
 
@@ -15,7 +20,7 @@ mod tests {
     #[test]
     fn test_part_one() {
         let result = part_one(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
+        assert_eq!(result, Some(143));
     }
 
     #[test]
