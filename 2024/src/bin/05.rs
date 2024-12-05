@@ -1,8 +1,9 @@
 advent_of_code::solution!(5);
 
+#[derive(Debug)]
 pub struct Rule {
-    pub left: String,
-    pub right: String,
+    pub left: usize,
+    pub right: usize,
 }
 
 pub fn part_one(input: &str) -> Option<usize> {
@@ -11,7 +12,7 @@ pub fn part_one(input: &str) -> Option<usize> {
     let rules: Vec<Rule> = split_input.next().unwrap()
         .lines()
         .map(|l| l.split("|"))
-        .map(|mut split| Rule { left: split.next().unwrap().to_string(), right: split.next().unwrap().to_string()})
+        .map(|mut split| Rule { left: split.next().map(str::parse::<usize>).unwrap().unwrap(), right: split.next().map(str::parse::<usize>).unwrap().unwrap()})
         .collect();
 
     Some(split_input
@@ -31,8 +32,21 @@ fn parse_usize_vec(input: &str) -> Vec<usize> {
         .collect()
 }
 
-// TODO implement
-fn is_valid(l: &[usize], rules: &[Rule]) -> bool {
+fn is_valid(pages: &[usize], rules: &[Rule]) -> bool {
+    let mut rules_remaining: Vec<&Rule> = rules.iter().collect();
+    for page in pages {
+        if rules_remaining.iter().any(|rule| rule.right == *page && pages.contains(&rule.left)) {
+            println!("violating");
+            println!("checking pages: {:?} at {page}", pages);
+            print!("rules remaining: {:?}", rules_remaining);
+            return false;
+        } else {
+            rules_remaining = rules_remaining
+                .into_iter()
+                .filter(|r| r.left != *page)
+                .collect();
+        }
+    }
     true
 }
 
@@ -60,6 +74,11 @@ mod tests {
     #[test]
     fn test_middle() {
         assert_eq!(middle(vec![1,2,3]), 2);
+    }
+
+    #[test]
+    fn test_is_valid() {
+        assert_eq!(is_valid(&vec![1,2], &vec![Rule{left: 1, right: 2}]), true);
     }
 
     #[test]
