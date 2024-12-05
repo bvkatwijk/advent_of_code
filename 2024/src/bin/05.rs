@@ -18,10 +18,17 @@ pub fn part_one(input: &str) -> Option<usize> {
         .next()
         .unwrap()
         .lines()
-        .map(|l| l.split(",").into_iter().collect::<Vec<&str>>())
+        .map(parse_usize_vec)
         .filter(|l| is_valid(l, &rules))
         .map(middle)
         .sum())
+}
+
+fn parse_usize_vec(input: &str) -> Vec<usize> {
+    input.split(",")
+        .into_iter()
+        .flat_map(str::parse::<usize>) // Do we even care that they are numbers? maybe could skip this
+        .collect()
 }
 
 // TODO implement
@@ -29,13 +36,10 @@ fn is_valid(l: &[usize], rules: &[Rule]) -> bool {
     true
 }
 
-fn middle(input: &str) -> usize {
-    let elements: Vec<_> = input.split(",").into_iter().collect();
-    let size = elements.len();
-    elements.into_iter()
+fn middle(input: Vec<usize>) -> usize {
+    let size = input.len();
+    input.into_iter()
         .nth(size /2)
-        .unwrap()
-        .parse::<usize>()
         .unwrap()
 }
 
@@ -49,9 +53,13 @@ mod tests {
     use super::*;
 
     #[test]
+    fn test_parse_usize_vec() {
+        assert_eq!(parse_usize_vec("1,2"), vec![1, 2]);
+    }
+
+    #[test]
     fn test_middle() {
-        assert_eq!(middle("1,2,3"), 2);
-        assert_eq!(middle("11,22,33"), 22);
+        assert_eq!(middle(vec![1,2,3]), 2);
     }
 
     #[test]
