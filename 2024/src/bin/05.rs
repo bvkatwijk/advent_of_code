@@ -18,13 +18,14 @@ pub fn part_one(input: &str) -> Option<usize> {
         .next()
         .unwrap()
         .lines()
+        .map(|l| l.split(",").into_iter().collect::<Vec<&str>>())
         .filter(|l| is_valid(l, &rules))
         .map(middle)
         .sum())
 }
 
 // TODO implement
-fn is_valid(l: &str, rules: &[Rule]) -> bool {
+fn is_valid(l: &[usize], rules: &[Rule]) -> bool {
     true
 }
 
