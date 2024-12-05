@@ -36,9 +36,6 @@ fn is_valid(pages: &[usize], rules: &[Rule]) -> bool {
     let mut rules_remaining: Vec<&Rule> = rules.iter().collect();
     for page in pages {
         if rules_remaining.iter().any(|rule| rule.right == *page && pages.contains(&rule.left)) {
-            println!("violating");
-            println!("checking pages: {:?} at {page}", pages);
-            print!("rules remaining: {:?}", rules_remaining);
             return false;
         } else {
             rules_remaining = rules_remaining
