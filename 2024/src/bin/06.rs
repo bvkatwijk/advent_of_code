@@ -38,6 +38,14 @@ pub fn part_one(input: &str) -> Option<usize> {
     Some(1 + count_x((&mat)))
 }
 
+pub fn part_two(input: &str) -> Option<u32> {
+    // detect loop: solve, guard edge => no loop, guard start position = loop.
+
+    // place single obstacle and detect loop
+    // brute force? lets try
+    None
+}
+
 fn next_move(x: usize, y: usize, mode: &Mode) -> (usize, usize) {
     match mode {
         Mode::North => (x - 1, y),
@@ -77,10 +85,6 @@ pub fn matrix_size(mat: &[Vec<&str>]) -> (usize, usize) {
         mat.len(),
         mat.iter().next().map(Vec::len).unwrap()
     )
-}
-
-pub fn part_two(input: &str) -> Option<u32> {
-    None
 }
 
 #[cfg(test)]
