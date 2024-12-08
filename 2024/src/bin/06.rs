@@ -1,17 +1,52 @@
 advent_of_code::solution!(6);
 
-pub fn part_one(input: &str) -> Option<u32> {
+const obstacle: &str = "#";
+
+pub enum Mode {
+    North,
+    East,
+    South,
+    West,
+}
+
+pub fn next(mode: &Mode) -> Mode {
+    match mode {
+        Mode::North => Mode::East,
+        Mode::East => Mode::South,
+        Mode::South => Mode::West,
+        Mode::West => Mode::North,
+    }
+}
+
+pub fn part_one(input: &str) -> Option<usize> {
     let mat = matrix(input);
     let (height, width) = matrix_size(&mat);
+    let mut mode = Mode::North;
+    let (guard_x, guard_y) = guard(&mat);
 
-    let (guard_x, guard_y) = guard(mat);
+    while guard_x != 0 || guard_x != height || guard_y != 0 || guard_y != width {
+        get next coordinates
+        if next step is legal {
+            replace current post with x
+            replace next with guard
+        } else {
+            mode = next(&mode);
+        }
+    }
+
     Some(0)
 }
 
-fn guard(mat: &[Vec<&str>]) -> (u32, u32) {
-    // mat.iter()
-    //     .filter(predicate)
-    (0, 0)
+fn guard(mat: &[Vec<&str>]) -> (usize, usize) {
+    let (height, width) = matrix_size(&mat);
+    for x in 0..height {
+        for y in 0..width {
+            if mat[x][y] == "^" {
+                return (x,y);
+            }
+        }
+    }
+    panic!("Guard (^) not found");
 }
 
 pub fn matrix(input: &str) -> Vec<Vec<&str>> {
