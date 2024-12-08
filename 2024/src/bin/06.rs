@@ -9,7 +9,7 @@ pub enum Mode {
     West,
 }
 
-pub fn next(mode: &Mode) -> Mode {
+pub fn next_mode(mode: &Mode) -> Mode {
     match mode {
         Mode::North => Mode::East,
         Mode::East => Mode::South,
@@ -19,25 +19,26 @@ pub fn next(mode: &Mode) -> Mode {
 }
 
 pub fn part_one(input: &str) -> Option<usize> {
-    let mat = matrix(input);
+    let mut mat = matrix(input);
     let (height, width) = matrix_size(&mat);
     let mut mode = Mode::North;
-    let (guard_x, guard_y) = guard(&mat);
+    let (mut guard_x, mut guard_y) = guard(&mat);
 
-    while guard_x != 0 || guard_x != height || guard_y != 0 || guard_y != width {
-        let next = move(guard_x, guard_y, mode);
-        if next step is legal {
-            replace current post with x
-            replace next with guard
+    while guard_x != 0 && guard_x != height - 1 && guard_y != 0 && guard_y != width - 1 {
+        let next = next_move(guard_x, guard_y, &mode);
+        let next_value = mat[next.0][next.1];
+        if mat[next.0][next.1] != "#" {
+            mat[guard_x][guard_y] = "X";
+            (guard_x, guard_y) = next;
         } else {
-            mode = next(&mode);
+            mode = next_mode(&mode);
         }
     }
 
-    Some(count_x((&mat)))
+    Some(1 + count_x((&mat)))
 }
 
-fn move(x: usize, y: usize, mode: &Mode) -> (usize, usize) {
+fn next_move(x: usize, y: usize, mode: &Mode) -> (usize, usize) {
     match mode {
         Mode::North => (x - 1, y),
         Mode::East =>(x, y + 1),
