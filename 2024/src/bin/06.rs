@@ -25,7 +25,7 @@ pub fn part_one(input: &str) -> Option<usize> {
     let (guard_x, guard_y) = guard(&mat);
 
     while guard_x != 0 || guard_x != height || guard_y != 0 || guard_y != width {
-        get next coordinates
+        let next = move(guard_x, guard_y, mode);
         if next step is legal {
             replace current post with x
             replace next with guard
@@ -34,7 +34,23 @@ pub fn part_one(input: &str) -> Option<usize> {
         }
     }
 
-    Some(0)
+    Some(count_x((&mat)))
+}
+
+fn move(x: usize, y: usize, mode: &Mode) -> (usize, usize) {
+    match mode {
+        Mode::North => (x - 1, y),
+        Mode::East =>(x, y + 1),
+        Mode::South =>(x + 1, y),
+        Mode::West =>(x, y - 1),
+    }
+}
+
+fn count_x(mat: &[Vec<&str>]) -> usize {
+    mat.iter()
+        .flat_map(|l| l.iter())
+        .filter(|s| **s == "X")
+        .count()
 }
 
 fn guard(mat: &[Vec<&str>]) -> (usize, usize) {
@@ -87,6 +103,15 @@ mod tests {
             vec![".", "."],
             vec!["^", "."]]),
             (1,0)
+        )
+    }
+
+    #[test]
+    fn test_count_x() {
+        assert_eq!(count_x(&vec![
+            vec![".", "X"],
+            vec!["X", "."]]),
+            2
         )
     }
 
