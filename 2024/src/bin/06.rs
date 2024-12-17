@@ -38,12 +38,63 @@ pub fn part_one(input: &str) -> Option<usize> {
     Some(1 + count_x((&mat)))
 }
 
-pub fn part_two(input: &str) -> Option<u32> {
+pub fn part_two(input: &str) -> Option<usize> {
+    let mut mat = matrix(input);
+    let (height, width) = matrix_size(&mat);
+    let mut mode = Mode::North;
+    let (mut guard_x, mut guard_y) = guard(&mat);
+
     // detect loop: solve, guard edge => no loop, guard start position = loop.
 
     // place single obstacle and detect loop
     // brute force? lets try
-    None
+    // i could also only consider places where the guard visits... more efficient
+    while guard_x != 0 && guard_x != height - 1 && guard_y != 0 && guard_y != width - 1 {
+        let next = next_move(guard_x, guard_y, &mode);
+        let next_value = mat[next.0][next.1];
+        if mat[next.0][next.1] != "#" {
+            mat[guard_x][guard_y] = "X";
+            (guard_x, guard_y) = next;
+        } else {
+            mode = next_mode(&mode);
+        }
+    }
+
+    Some(mat.iter()
+        .enumerate()
+        .flat_map(|(x, line)| line.iter()
+            .enumerate()
+            .map(|y, element| replace_and_detect_loop(mat, x, y)))
+        .filter())
+}
+
+fn replace_and_detect_loop(mat: &[Vec<&str>], obstacle_x: usize, obstacle_y: usize, guard_x: usize, guard_y: usize) -> bool {
+    detect_loop(add_obstacle_at(mat, obstacle_x, obstacle_y), guard_x, guard_y);
+}
+
+fn add_obstacle_at(mat: &[Vec<&str>], obstacle_x: usize, obstacle_y: usize) -> &[Vec<&str>] {
+    mat
+}
+
+fn detect_loop(mat: &[Vec<&str>], x: usize, y: usize) -> bool {
+    false
+}
+
+fn detect_remaining_loop(mut mat: &[Vec<&str>], guard_start_x: usize, guard_start_y: usize, guard_x: usize, guard_y: usize, mode: &Mode) {
+    let (height, width) = matrix_size(&mat);
+    let mut mode = Mode::North;
+    let (mut guard_x, mut guard_y) = guard(&mat);
+
+    while guard_x != 0 && guard_x != height - 1 && guard_y != 0 && guard_y != width - 1 {
+        let next = next_move(guard_x, guard_y, &mode);
+        let next_value = mat[next.0][next.1];
+        if mat[next.0][next.1] != "#" {
+            mat[guard_x][guard_y] = "X";
+            (guard_x, guard_y) = next;
+        } else {
+            mode = next_mode(&mode);
+        }
+    }
 }
 
 fn next_move(x: usize, y: usize, mode: &Mode) -> (usize, usize) {
