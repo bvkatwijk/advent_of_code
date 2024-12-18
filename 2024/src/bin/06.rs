@@ -26,7 +26,7 @@ pub fn part_one(input: &str) -> Option<usize> {
 
     while guard_x != 0 && guard_x != height - 1 && guard_y != 0 && guard_y != width - 1 {
         let next = next_move(guard_x, guard_y, &mode);
-        let next_value = mat[next.0][next.1];
+        let _next_value = mat[next.0][next.1];
         if mat[next.0][next.1] != "#" {
             mat[guard_x][guard_y] = "X";
             (guard_x, guard_y) = next;
@@ -35,7 +35,7 @@ pub fn part_one(input: &str) -> Option<usize> {
         }
     }
 
-    Some(1 + count_x((&mat)))
+    Some(1 + count_x(&mat))
 }
 
 pub fn part_two(input: &str) -> Option<usize> {
@@ -48,10 +48,10 @@ pub fn part_two(input: &str) -> Option<usize> {
 
     // place single obstacle and detect loop
     // brute force? lets try
-    // i could also only consider places where the guard visits... more efficient
+    // i could also only consider places where the guard visits... more efficient lets see how it performs initially
     while guard_x != 0 && guard_x != height - 1 && guard_y != 0 && guard_y != width - 1 {
         let next = next_move(guard_x, guard_y, &mode);
-        let next_value = mat[next.0][next.1];
+        let _next_value = mat[next.0][next.1];
         if mat[next.0][next.1] != "#" {
             mat[guard_x][guard_y] = "X";
             (guard_x, guard_y) = next;
@@ -60,34 +60,37 @@ pub fn part_two(input: &str) -> Option<usize> {
         }
     }
 
-    Some(mat.iter()
-        .enumerate()
-        .flat_map(|(x, line)| line.iter()
-            .enumerate()
-            .map(|y, element| replace_and_detect_loop(mat, x, y)))
-        .filter())
+    Some(0)
+
+    // Some(mat.iter()
+    //     .enumerate()
+    //     .flat_map(|(x, line)| line.iter()
+    //         .enumerate()
+    //         .map(|(y, element)| replace_and_detect_loop(&mat, x, y, guard_x, guard_y)))
+    //     .filter())
 }
+
 
 fn replace_and_detect_loop(mat: &[Vec<&str>], obstacle_x: usize, obstacle_y: usize, guard_x: usize, guard_y: usize) -> bool {
-    detect_loop(add_obstacle_at(mat, obstacle_x, obstacle_y), guard_x, guard_y);
+    detect_loop(add_obstacle_at(mat, obstacle_x, obstacle_y), guard_x, guard_y)
 }
 
-fn add_obstacle_at(mat: &[Vec<&str>], obstacle_x: usize, obstacle_y: usize) -> &[Vec<&str>] {
+fn add_obstacle_at<'a>(mat: &'a [Vec<&str>], _obstacle_x: usize, _obstacle_y: usize) -> &'a[Vec<&'a str>] {
     mat
 }
 
-fn detect_loop(mat: &[Vec<&str>], x: usize, y: usize) -> bool {
+fn detect_loop(_mat: &[Vec<&str>], _x: usize, _y: usize) -> bool {
     false
 }
 
-fn detect_remaining_loop(mut mat: &[Vec<&str>], guard_start_x: usize, guard_start_y: usize, guard_x: usize, guard_y: usize, mode: &Mode) {
+fn detect_remaining_loop(mat: &mut [Vec<&str>], _guard_start_x: usize, _guard_start_y: usize, _guard_x: usize, _guard_y: usize, _mode: &Mode) -> bool {
     let (height, width) = matrix_size(&mat);
     let mut mode = Mode::North;
     let (mut guard_x, mut guard_y) = guard(&mat);
 
     while guard_x != 0 && guard_x != height - 1 && guard_y != 0 && guard_y != width - 1 {
         let next = next_move(guard_x, guard_y, &mode);
-        let next_value = mat[next.0][next.1];
+        let _next_value = mat[next.0][next.1];
         if mat[next.0][next.1] != "#" {
             mat[guard_x][guard_y] = "X";
             (guard_x, guard_y) = next;
@@ -95,6 +98,7 @@ fn detect_remaining_loop(mut mat: &[Vec<&str>], guard_start_x: usize, guard_star
             mode = next_mode(&mode);
         }
     }
+    true
 }
 
 fn next_move(x: usize, y: usize, mode: &Mode) -> (usize, usize) {
@@ -150,6 +154,17 @@ mod tests {
             vec![".", "."],
             vec!["^", "."]]),
             (2,2)
+        )
+    }
+
+    #[test]
+    fn test_add_obstacle_at() {
+        assert_eq!(add_obstacle_at(&vec![
+            vec![".", "."],
+            vec!["^", "."]], 0, 0),
+            vec![
+            vec!["X", "."],
+            vec!["^", "."]]
         )
     }
 
