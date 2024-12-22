@@ -22,7 +22,7 @@ pub fn calibration(input: &str) -> Option<u64> {
 }
 
 pub fn combination(current: u64, target: u64, vals: &[u64]) -> bool {
-    if current == target {
+    if current == target && vals.len() < 1 {
         return true;
     }
     if current > target {
