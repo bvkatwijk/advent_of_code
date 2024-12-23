@@ -1,29 +1,22 @@
-use advent_of_code::matrix;
+use advent_of_code::{matrix, Dir};
 
 advent_of_code::solution!(6);
 
 const obstacle: &str = "#";
 
-pub enum Mode {
-    North,
-    East,
-    South,
-    West,
-}
-
-pub fn next_mode(mode: &Mode) -> Mode {
+pub fn next_mode(mode: &Dir) -> Dir {
     match mode {
-        Mode::North => Mode::East,
-        Mode::East => Mode::South,
-        Mode::South => Mode::West,
-        Mode::West => Mode::North,
+        Dir::North => Dir::East,
+        Dir::East => Dir::South,
+        Dir::South => Dir::West,
+        Dir::West => Dir::North,
     }
 }
 
 pub fn part_one(input: &str) -> Option<usize> {
     let mut mat = matrix(input);
     let (height, width) = matrix_size(&mat);
-    let mut mode = Mode::North;
+    let mut mode = Dir::North;
     let (mut guard_x, mut guard_y) = guard(&mat);
 
     while guard_x != 0 && guard_x != height - 1 && guard_y != 0 && guard_y != width - 1 {
@@ -43,7 +36,7 @@ pub fn part_one(input: &str) -> Option<usize> {
 pub fn part_two(input: &str) -> Option<usize> {
     let mut mat = matrix(input);
     let (height, width) = matrix_size(&mat);
-    let mut mode = Mode::North;
+    let mut mode = Dir::North;
     let (mut guard_x, mut guard_y) = guard(&mat);
 
     // detect loop: solve, guard edge => no loop, guard start position = loop.
@@ -85,9 +78,9 @@ fn detect_loop(_mat: &[Vec<&str>], _x: usize, _y: usize) -> bool {
     false
 }
 
-fn detect_remaining_loop(mat: &mut [Vec<&str>], _guard_start_x: usize, _guard_start_y: usize, _guard_x: usize, _guard_y: usize, _mode: &Mode) -> bool {
+fn detect_remaining_loop(mat: &mut [Vec<&str>], _guard_start_x: usize, _guard_start_y: usize, _guard_x: usize, _guard_y: usize, _mode: &Dir) -> bool {
     let (height, width) = matrix_size(&mat);
-    let mut mode = Mode::North;
+    let mut mode = Dir::North;
     let (mut guard_x, mut guard_y) = guard(&mat);
 
     while guard_x != 0 && guard_x != height - 1 && guard_y != 0 && guard_y != width - 1 {
@@ -103,12 +96,12 @@ fn detect_remaining_loop(mat: &mut [Vec<&str>], _guard_start_x: usize, _guard_st
     true
 }
 
-fn next_move(x: usize, y: usize, mode: &Mode) -> (usize, usize) {
+fn next_move(x: usize, y: usize, mode: &Dir) -> (usize, usize) {
     match mode {
-        Mode::North => (x - 1, y),
-        Mode::East =>(x, y + 1),
-        Mode::South =>(x + 1, y),
-        Mode::West =>(x, y - 1),
+        Dir::North => (x - 1, y),
+        Dir::East =>(x, y + 1),
+        Dir::South =>(x + 1, y),
+        Dir::West =>(x, y - 1),
     }
 }
 
