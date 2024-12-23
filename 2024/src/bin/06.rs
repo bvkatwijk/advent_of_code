@@ -1,3 +1,5 @@
+use advent_of_code::matrix;
+
 advent_of_code::solution!(6);
 
 const obstacle: &str = "#";
@@ -127,12 +129,6 @@ fn guard(mat: &[Vec<&str>]) -> (usize, usize) {
         }
     }
     panic!("Guard (^) not found");
-}
-
-pub fn matrix(input: &str) -> Vec<Vec<&str>> {
-    input.lines()
-    .map(|l| l.split("").collect())
-    .collect()
 }
 
 pub fn matrix_size(mat: &[Vec<&str>]) -> (usize, usize) {
