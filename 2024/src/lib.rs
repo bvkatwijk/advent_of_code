@@ -29,6 +29,16 @@ pub fn matrix_size(mat: &[Vec<&str>]) -> (usize, usize) {
     )
 }
 
+// Count number of occurrences of a str in a matrix
+pub fn count(mat: &[Vec<&str>], arg: &str) -> u32 {
+    mat.iter()
+        .flat_map(move |r| r.iter())
+        .filter(|s| **s == arg)
+        .count()
+        .try_into()
+        .unwrap()
+}
+
 #[cfg(test)]
 mod tests {
     use std::vec;
@@ -42,5 +52,14 @@ mod tests {
             vec!["^", "."]]),
             (2,2)
         )
+    }
+
+    #[test]
+    fn test_count() {
+        assert_eq!(count(&vec![
+            vec![".", "a"],
+            vec!["b", "."]
+        ], "b"),
+        1);
     }
 }

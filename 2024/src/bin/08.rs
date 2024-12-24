@@ -1,6 +1,6 @@
 use std::{collections::HashMap, iter::Map};
 
-use advent_of_code::{matrix, Point};
+use advent_of_code::{count, matrix, Point};
 
 
 advent_of_code::solution!(8);
@@ -8,7 +8,14 @@ advent_of_code::solution!(8);
 pub fn part_one(input: &str) -> Option<u32> {
     let mat = matrix(input);
     let antennas = antennas(&mat);
-    None
+
+    // iterate over same antennas
+    // for each pair
+    //attempt to insert antinode
+
+    // coiunt antinodes
+
+    Some(count(&mat, "#"))
 }
 
 fn antennas(mat: &[Vec<&str>]) -> HashMap<String, Vec<Point>> {
