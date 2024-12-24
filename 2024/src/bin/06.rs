@@ -1,8 +1,6 @@
-use advent_of_code::{matrix, Dir};
+use advent_of_code::{matrix, matrix_size, Dir};
 
 advent_of_code::solution!(6);
-
-const obstacle: &str = "#";
 
 pub fn next_mode(mode: &Dir) -> Dir {
     match mode {
@@ -124,27 +122,11 @@ fn guard(mat: &[Vec<&str>]) -> (usize, usize) {
     panic!("Guard (^) not found");
 }
 
-pub fn matrix_size(mat: &[Vec<&str>]) -> (usize, usize) {
-    (
-        mat.len(),
-        mat.iter().next().map(Vec::len).unwrap()
-    )
-}
-
 #[cfg(test)]
 mod tests {
     use std::vec;
 
     use super::*;
-
-    #[test]
-    fn test_matrix_size() {
-        assert_eq!(matrix_size(&vec![
-            vec![".", "."],
-            vec!["^", "."]]),
-            (2,2)
-        )
-    }
 
     // #[test]
     // fn test_add_obstacle_at() {

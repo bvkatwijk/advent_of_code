@@ -1,8 +1,19 @@
+use std::{collections::HashMap, iter::Map};
+
+use advent_of_code::{matrix, Point};
+
 
 advent_of_code::solution!(8);
 
 pub fn part_one(input: &str) -> Option<u32> {
+    let mat = matrix(input);
+    let antennas = antennas(&mat);
     None
+}
+
+fn antennas(mat: &[Vec<&str>]) -> HashMap<char, Vec<Point>> {
+    let map: HashMap<char, Vec<Point>> = HashMap::new();
+    map
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
@@ -11,7 +22,23 @@ pub fn part_two(input: &str) -> Option<u32> {
 
 #[cfg(test)]
 mod tests {
+    use std::vec;
+
     use super::*;
+
+    #[test]
+    fn test_antennas() {
+        let point = Point { x: 1, y: 2 };
+        let it = vec![point];
+        let map = HashMap::new();
+        map.entry("a");
+        assert_eq!(antennas(&vec![
+            vec![".", "a"],
+            vec!["b", "."]
+        ]),
+        map
+        );
+    }
 
     #[test]
     fn test_part_one() {
