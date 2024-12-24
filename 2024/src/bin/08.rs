@@ -22,7 +22,8 @@ fn antennas(mat: &[Vec<&str>]) -> HashMap<String, Vec<Point>> {
             if c_e != "." {
                 println!("current: ({r_i}, {c_i}): {c_e}");
                 map.entry(c_e.to_string())
-                    .and_modify(|v| v.push(Point { x: r_i as u32, y: c_i as u32 }));
+                    .or_insert(Vec::new())
+                    .push(Point { x: r_i as u32, y: c_i as u32 });
             }
         });
     map
