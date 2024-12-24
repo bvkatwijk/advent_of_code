@@ -17,7 +17,7 @@ pub struct Point {
 // Split
 pub fn matrix(input: &str) -> Vec<Vec<&str>> {
     input.lines()
-    .map(|l| l.split("").collect())
+    .map(|l| l.split("").filter(|s| !s.is_empty()).collect())
     .collect()
 }
 
