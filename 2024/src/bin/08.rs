@@ -11,8 +11,20 @@ pub fn part_one(input: &str) -> Option<u32> {
     None
 }
 
-fn antennas(mat: &[Vec<&str>]) -> HashMap<char, Vec<Point>> {
-    let map: HashMap<char, Vec<Point>> = HashMap::new();
+fn antennas(mat: &[Vec<&str>]) -> HashMap<String, Vec<Point>> {
+    let mut map: HashMap<String, Vec<Point>> = HashMap::new();
+    mat.iter()
+        .enumerate()
+        .flat_map(|(r_i, r_e)| r_e.iter()
+            .enumerate()
+            .map(move |(c_i, c_e)| (r_i, r_e, c_i, *c_e)))
+        .for_each(|(r_i, r_e, c_i, c_e)| {
+            if c_e != "." {
+                println!("current: ({r_i}, {c_i}): {c_e}");
+                map.entry(c_e.to_string())
+                    .and_modify(|v| v.push(Point { x: r_i as u32, y: c_i as u32 }));
+            }
+        });
     map
 }
 
@@ -28,15 +40,14 @@ mod tests {
 
     #[test]
     fn test_antennas() {
-        let point = Point { x: 1, y: 2 };
-        let mut map = HashMap::new();
-        map.entry("a").insert_entry(&point);
-        assert_eq!(antennas(&vec![
+        let p01 = Point { x: 0, y: 1 };
+        let p10 = Point { x: 1, y: 0 };
+        let result = antennas(&vec![
             vec![".", "a"],
             vec!["b", "."]
-        ]).get(&'a').unwrap(),
-        &vec![point]
-        );
+        ]);
+        assert_eq!(result.get("a").unwrap(), &vec![p01]);
+        assert_eq!(result.get("b").unwrap(), &vec![p10]);
     }
 
     #[test]
