@@ -29,14 +29,13 @@ mod tests {
     #[test]
     fn test_antennas() {
         let point = Point { x: 1, y: 2 };
-        let it = vec![point];
-        let map = HashMap::new();
-        map.entry("a");
+        let mut map = HashMap::new();
+        map.entry("a").insert_entry(&point);
         assert_eq!(antennas(&vec![
             vec![".", "a"],
             vec!["b", "."]
-        ]),
-        map
+        ]).get(&'a').unwrap(),
+        &vec![point]
         );
     }
 

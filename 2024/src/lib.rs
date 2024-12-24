@@ -1,5 +1,6 @@
 pub mod template;
 
+#[derive(Debug, PartialEq, Eq)]
 pub enum Dir {
     North,
     East,
@@ -7,6 +8,7 @@ pub enum Dir {
     West,
 }
 
+#[derive(Debug, PartialEq, Eq)]
 pub struct Point {
     pub x: u32,
     pub y: u32,

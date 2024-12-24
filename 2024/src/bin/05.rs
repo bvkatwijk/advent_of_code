@@ -77,7 +77,7 @@ pub fn part_two(input: &str) -> Option<usize> {
         .sum())
 }
 
-fn corect_order(l: &[usize], rules: &[Rule]) -> Vec<usize> {
+fn corect_order(_l: &[usize], _rules: &[Rule]) -> Vec<usize> {
     vec![]
 }
 
