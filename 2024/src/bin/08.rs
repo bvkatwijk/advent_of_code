@@ -1,6 +1,7 @@
+use core::slice;
 use std::{collections::HashMap, iter::Map};
 
-use advent_of_code::{count, matrix, Point};
+use advent_of_code::{count, matrix, pairs, Point};
 
 
 advent_of_code::solution!(8);
@@ -9,11 +10,16 @@ pub fn part_one(input: &str) -> Option<u32> {
     let mat = matrix(input);
     let antennas = antennas(&mat);
 
-    // iterate over same antennas
+    antennas.values()
+        .flat_map(|points| pairs(&points))
+        .for_each(|(antenna_one, antenna_other)| {
+            println!("Antenna pair: {antenna_one}, {antenna_other}");
+        });
+    //         .enumerate()
+    //         .map(|(p_i, p)| points[p_i+1..].iter())
+    //     )
     // for each pair
     //attempt to insert antinode
-
-    // coiunt antinodes
 
     Some(count(&mat, "#"))
 }
