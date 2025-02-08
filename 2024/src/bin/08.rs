@@ -12,8 +12,10 @@ pub fn part_one(input: &str) -> Option<u32> {
 
     antennas.values()
         .flat_map(|points| pairs(&points))
-        .for_each(|(antenna_one, antenna_other)| {
-            println!("Antenna pair: {antenna_one}, {antenna_other}");
+        .flat_map(|(p0, p1)| antinodes(&p0, &p1))
+        .for_each(|p| {
+            println!("Place antinode at: {p}");
+
         });
     //         .enumerate()
     //         .map(|(p_i, p)| points[p_i+1..].iter())
@@ -22,6 +24,10 @@ pub fn part_one(input: &str) -> Option<u32> {
     //attempt to insert antinode
 
     Some(count(&mat, "#"))
+}
+
+fn antinodes(p0: &Point, p1: &Point) -> Vec<Point> {
+    vec![]
 }
 
 fn antennas(mat: &[Vec<&str>]) -> HashMap<String, Vec<Point>> {
@@ -62,6 +68,19 @@ mod tests {
         ]);
         assert_eq!(result.get("a").unwrap(), &vec![p01]);
         assert_eq!(result.get("b").unwrap(), &vec![p10]);
+    }
+
+    #[test]
+    fn test_antinodes() {
+        let p11 = Point { x: 1, y: 1 };
+        let p12 = Point { x: 1, y: 2 };
+        assert_eq!(
+            antinodes(&p11, &p12),
+            vec![
+                Point { x : 1, y: 0},
+                Point { x: 1, y: 3}
+            ]
+        );
     }
 
     #[test]

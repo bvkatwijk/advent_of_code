@@ -1,4 +1,5 @@
 use core::fmt;
+use std::ops::Add;
 
 pub mod template;
 
@@ -24,6 +25,17 @@ impl fmt::Display for Point {
         // operation succeeded or failed. Note that `write!` uses syntax which
         // is very similar to `println!`.
         write!(f, "{} {}", self.x, self.y)
+    }
+}
+
+impl Add for Point {
+    type Output = Self;
+
+    fn add(self, rhs: Self) -> Self {
+        Self {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+        }
     }
 }
 
