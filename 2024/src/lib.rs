@@ -1,5 +1,5 @@
 use core::fmt;
-use std::ops::Add;
+use std::ops::{Add, Sub};
 
 pub mod template;
 
@@ -35,6 +35,19 @@ impl Add for Point {
         Self {
             x: self.x + rhs.x,
             y: self.y + rhs.y,
+        }
+    }
+}
+
+impl Point {
+    fn sub(self, rhs: Self) -> Option<Self> {
+        if self.x < rhs.x || self.y < rhs.y {
+            None
+        } else {
+            Some(Self {
+                x: self.x - rhs.x,
+                y: self.y - rhs.y,
+            })
         }
     }
 }

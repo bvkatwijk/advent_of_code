@@ -27,7 +27,10 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 fn antinodes(p0: &Point, p1: &Point) -> Vec<Point> {
-    vec![]
+    vec![
+        p0.clone() + p0.clone() - p1.clone(),
+        p1.clone() + p1.clone() - p0.clone()
+    ]
 }
 
 fn antennas(mat: &[Vec<&str>]) -> HashMap<String, Vec<Point>> {
