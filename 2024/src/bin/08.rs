@@ -3,7 +3,6 @@ use std::{collections::HashMap, iter::Map};
 
 use advent_of_code::{count, matrix, pairs, Point};
 
-
 advent_of_code::solution!(8);
 
 pub fn part_one(input: &str) -> Option<u32> {
