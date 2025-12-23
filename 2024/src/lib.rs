@@ -39,6 +39,21 @@ impl Add for Point {
     }
 }
 
+impl Sub for Point {
+    type Output = Option<Self>;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        if self.x < rhs.x || self.y < rhs.y {
+            None
+        } else {
+            Some(Self {
+                x: self.x - rhs.x,
+                y: self.y - rhs.y,
+            })
+        }
+    }
+}
+
 impl Point {
     fn sub(self, rhs: Self) -> Option<Self> {
         if self.x < rhs.x || self.y < rhs.y {
